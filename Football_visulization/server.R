@@ -1,0 +1,76 @@
+#
+# This is the server logic of a Shiny web application. You can run the
+# application by clicking 'Run App' above.
+#
+# Find out more about building applications with Shiny here:
+#
+#    http://shiny.rstudio.com/
+#
+
+library(shiny)
+library(shinyWidgets)
+library(ggplot2)
+
+
+source("data.R")
+source("plot_func.R")
+
+# Define server logic required to draw a histogram
+shinyServer(function(input, output) {
+  
+    output$detail <- renderUI({
+      if (input$type == 1) {
+        awesomeRadio("mode",h3("Select the statistics"),
+                     choices = list("Player statistics in UCL"=1,"Player statistics in EPL"=2,"Player statistics comparation"=3),
+                     selected = 1)
+      }else if (input$type == 2){
+        awesomeRadio("mode",h3("Select the statistics"),
+                     choices = list("Team statistics in UCL"=4,"Team statistics in La Liga"=5,"Team statistics in Serie A"=6),
+                     selected = 4)
+      }else if (input$type == 3){
+        awesomeRadio("mode",h3("Select the statistics"),
+                     choices = list("Signing suggest for La Liga"=7, "Signing suggestion for Serie A"=8),
+                     selected = 7)
+      }
+    })
+    
+    output$main_header <- renderUI({h3(main_plot_header_set[as.numeric(input$mode)])})
+    
+    output$main_selector <- renderUI({
+      if (as.numeric(input$mode)==1||as.numeric(input$mode)==2||as.numeric(input$mode)==3){
+        tabsetPanel(
+          id = "player_data_mode",
+          tabPanel("Attacking",value = 1), 
+          tabPanel("Defence",value = 2), 
+          tabPanel("Distribution",value = 3),
+          tabPanel("Goalkeeping",value = 4)
+        )
+      }else if(as.numeric(input$mode)==4||as.numeric(input$mode)==5 || as.numeric(input$mode)==6){
+        tabsetPanel(
+          id = "team_data_mode",
+          tabPanel("Single Team Statistics",value = 1), 
+          tabPanel("Total Teams",value = 2), 
+        )
+      }
+    })
+    
+    output$main_searcher <- renderUI({
+      if (as.numeric(input$type)!=1){
+        if(!(as.numeric(input$type)==2&&as.numeric(input$team_data_mode==2))){
+          s_team_input(as.numeric(input$mode)) 
+        }
+      }else{
+        if(as.numeric(input$mode!=3)){
+          s_player_input(as.numeric(input$player_data_mode))
+        }else{
+          s_multi_input()
+        }
+      }
+    })
+    
+    output$main_plotter<-renderPlot({
+      #player_plotter(1)
+    })
+    
+})
+
