@@ -21,7 +21,7 @@ shinyServer(function(input, output) {
     output$detail <- renderUI({
       if (input$type == 1) {
         awesomeRadio("mode",h3("Select the statistics"),
-                     choices = list("Player statistics in UCL"=1,"Player statistics in EPL"=2,"Player statistics comparation"=3),
+                     choices = list("Player statistics in UCL"=1,"Player statistics in EPL"=2,"Statistics comparation"=3),
                      selected = 1)
       }else if (input$type == 2){
         awesomeRadio("mode",h3("Select the statistics"),
@@ -40,10 +40,10 @@ shinyServer(function(input, output) {
       if (as.numeric(input$mode)==1||as.numeric(input$mode)==2||as.numeric(input$mode)==3){
         tabsetPanel(
           id = "player_data_mode",
-          tabPanel("Attacking",value = 1), 
-          tabPanel("Defence",value = 2), 
-          tabPanel("Distribution",value = 3),
-          tabPanel("Goalkeeping",value = 4)
+          tabPanel("Attacker",value = 1), 
+          tabPanel("Midfielder",value = 2), 
+          tabPanel("Defender",value = 3),
+          tabPanel("Goalkeeper",value = 4)
         )
       }else if(as.numeric(input$mode)==4||as.numeric(input$mode)==5 || as.numeric(input$mode)==6){
         tabsetPanel(
@@ -68,8 +68,35 @@ shinyServer(function(input, output) {
       }
     })
     
-    output$main_plotter<-renderPlot({
-      #player_plotter(1)
+    
+    output$plotter1<-renderPlot({
+      if (as.numeric(input$type)==1){
+        player_plotter1(input$player_data_mode, input$player_name)
+      }
+    })
+    
+    output$plotter2<-renderPlot({
+      if (as.numeric(input$type)==1){
+        player_plotter2(input$player_data_mode, input$player_name)
+      }
+    })
+    
+    output$plotter3<-renderPlot({
+      if (as.numeric(input$type)==1){
+        player_plotter3(input$player_data_mode, input$player_name)
+      }
+    })
+    
+    output$plotter4<-renderPlot({
+      if (as.numeric(input$type)==1){
+        player_plotter4(input$player_data_mode, input$player_name)
+      }
+    })
+    
+    output$plotter5<-renderPlot({
+      if (as.numeric(input$type)==1){
+        player_plotter5(input$player_data_mode, input$player_name)
+      }
     })
     
 })

@@ -17,8 +17,8 @@ shinyUI(fluidPage(
     titlePanel("European football data visulization (Season 2021-2022)"),
 
     # Sidebar with a slider input for number of bins
-    sidebarLayout(
-        sidebarPanel(
+    fluidRow(
+        column(3,
             awesomeRadio(
               inputId = "type", label = h3("Choose type of statistics:"), 
               choices = list("Player Statistics"=1, "Team Statistics"=2,"Signing Suggestion"=3),
@@ -30,11 +30,17 @@ shinyUI(fluidPage(
         ),
 
         # Show a plot of the generated distribution
-        mainPanel(
+        column(8,
           uiOutput("main_header"),
           uiOutput("main_selector"),
           uiOutput("main_searcher"),
-          plotOutput("main_plotter"),
+          column(12,align='center',plotOutput("plotter2")),
+          column(12,
+                 column(6,plotOutput("plotter1")),
+                 column(6,plotOutput("plotter3"))),
+          column(12,
+                 column(6,plotOutput("plotter4")),
+                 column(6,plotOutput("plotter5"))),
         )
     )
 ))
