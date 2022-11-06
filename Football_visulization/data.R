@@ -80,6 +80,29 @@ rownames(ucl_defender_max_min_average) <- c("Max", "Min", "Average")
 ucl_defender_radar <- rbind(ucl_defender_max_min_average, ucl_defender_radar)
 
 # deal with midfielder data
+ucl_midfielder_passing <- (ucl_distribution %>% filter(position=='Midfielder'))[c(2,5,6,12)]
+ucl_midfielder_defend <- (ucl_defend %>% filter(position=='Midfielder'))[c(2,5,6,7,8,9)]
+ucl_midfielder_final <- ucl_key_stats %>% filter(position=='Midfielder')
+ucl_midfielder_final <- merge(ucl_midfielder_final,ucl_midfielder_defend, by="player_name")
+ucl_midfielder_final <- merge(ucl_midfielder_final,ucl_midfielder_passing, by="player_name")
+ucl_midfielder_final[is.na(ucl_midfielder_final)] <- 0
 
+ucl_midfielder_final <- distinct(ucl_midfielder_final,player_name,.keep_all = T)
+
+ucl_midfielder_key_stat <- ucl_midfielder_final[c(1,4,6,7,8,9,10,11,13,14,15)]
+
+## midfielder radar data
+### pass_accuracy, pass_attempted, distance_covered, balls_recovered, tackles won, goal+assist per 90 minutes
+ucl_midfielder_radar <- cbind(ucl_midfielder_key_stat[1],
+                              (ucl_midfielder_key_stat[3]+ucl_midfielder_key_stat[4])/ucl_midfielder_key_stat[2]*90,
+                              apply(ucl_midfielder_key_stat[5],2,as.numeric)/ucl_midfielder_key_stat[2]*90,
+                              ucl_midfielder_key_stat[6]/ucl_midfielder_key_stat[2]*90,
+                              ucl_midfielder_key_stat[8]/ucl_midfielder_key_stat[2]*90,ucl_midfielder_key_stat[10],
+                              ucl_midfielder_key_stat[11]/ucl_midfielder_key_stat[2]*90)
+rownames(ucl_midfielder_radar) <- ucl_midfielder_radar$player_name
+ucl_midfielder_radar <- ucl_midfielder_radar[c(2,3,4,5,6,7)]
+colnames(ucl_midfielder_radar)[1] <- c("create_goals")
+colnames(ucl_midfielder_radar)[2] <- c("distance_covered")
+colnames(ucl_midfielder_radar)[4] <- c("tackle_won")
 
 # deal with attacker data
