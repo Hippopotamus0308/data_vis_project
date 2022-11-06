@@ -34,13 +34,13 @@ shinyUI(fluidPage(
           uiOutput("main_header"),
           uiOutput("main_selector"),
           uiOutput("main_searcher"),
-          column(12,align='center',plotOutput("plotter2")),
+          column(12,align='center',plotOutput("plotter_main_res")),
           column(12,
-                 column(6,plotOutput("plotter1")),
-                 column(6,plotOutput("plotter3"))),
+                 column(6,plotOutput("plotter_radar")),
+                 column(6,plotOutput("plotter_addition"))),
           column(12,
-                 column(6,plotOutput("plotter4")),
-                 column(6,plotOutput("plotter5"))),
+                 column(6,plotOutput("plotter_addition2")),
+                 column(6,plotOutput("plotter_discipline"))),
         )
     )
 ))

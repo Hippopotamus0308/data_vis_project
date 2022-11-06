@@ -69,31 +69,31 @@ shinyServer(function(input, output) {
     })
     
     
-    output$plotter1<-renderPlot({
+    output$plotter_radar<-renderPlot({
       if (as.numeric(input$type)==1){
-        player_plotter1(input$player_data_mode, input$player_name)
+        player_plotter_radar(input$player_data_mode, input$player_name)
       }
     })
     
-    output$plotter2<-renderPlot({
+    output$plotter_main_res<-renderPlot({
       if (as.numeric(input$type)==1){
-        player_plotter2(input$player_data_mode, input$player_name)
+        player_plotter_main_res(input$player_data_mode, input$player_name)
       }
     })
     
-    output$plotter3<-renderPlot({
+    output$plotter_addition<-renderPlot({
       if (as.numeric(input$type)==1){
-        player_plotter3(input$player_data_mode, input$player_name)
+        player_plotter_addition(input$player_data_mode, input$player_name)
       }
     })
     
-    output$plotter4<-renderPlot({
+    output$plotter_addition2<-renderPlot({
       if (as.numeric(input$type)==1){
-        player_plotter4(input$player_data_mode, input$player_name)
+        player_plotter_addition2(input$player_data_mode, input$player_name)
       }
     })
     
-    output$plotter5<-renderPlot({
+    output$plotter_discipline<-renderPlot({
       if (as.numeric(input$type)==1){
         player_plotter5(input$player_data_mode, input$player_name)
       }

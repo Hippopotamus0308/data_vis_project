@@ -3,13 +3,20 @@ source('data.R')
 library(fmsb)
 
 # radar chart for a certain player / average data
-player_plotter1 <- function(type, player_name){
+player_plotter_radar <- function(type, player_name){
   if (type==1){
     
   }else if(type==2){
     
   }else if(type==3){
-    
+    par(mar=c(5, 1, 5, 1), xpd=TRUE)
+    football_radarchart(ucl_defender_radar[c("Max","Min","Average",player_name),],"Defender radar chart", color = c("blue","red"))
+    legend(
+      x = "bottom", legend = c("Average",player_name), horiz = TRUE,
+      bty = "n", pch = 20 , col = c("blue", "red"), text.col = "black",
+      inset=c(0,-0.1),
+      xpd = TRUE
+    )
   }else if(type==4){
     if(player_name==""){
       par(mar=c(4, 1, 1, 1), xpd=TRUE)
@@ -43,13 +50,23 @@ football_radarchart <- function(data, title, color="blue", label = colnames(data
 
 # plot main responsibility of a category
 # goalkeeper-save defender-defense midfielder-assist&keypass attacker-score
-player_plotter2 <- function(type,pname){
+player_plotter_main_res <- function(type,pname){
   if (type==1){
     
   }else if(type==2){
     
   }else if(type==3){
-    
+    ucl_defender_final %>% ggplot(aes(y=tackles/minutes_played*90,x=(t_won+0.001)/(tackles+0.01)*100,label=player_name))+
+      ggtitle("Defender's key statistics",)+geom_point()+
+      scale_x_continuous("tackle win rate(%)",limits = c(0,100))+scale_y_continuous("average tackles(/90min)",limits = c(0,5))+
+      geom_hline(yintercept = 1.18,col = "blue") + geom_vline(xintercept = 45.57, col = "blue") +
+      theme(plot.title = element_text(size = 15, face = "bold"),
+            axis.title = element_text(size = 15, face = "bold"))+
+      geom_label(data=ucl_defender_final %>% filter(player_name==pname),
+                 nudge_x = 2, nudge_y = 0.2,
+                 aes(label=paste(player_name,", ", club)))+
+      geom_point(data=ucl_defender_final %>% filter(player_name==pname),
+                 aes(y=tackles/minutes_played*90,x=(t_won+0.001)/(tackles+0.01)*100), color="red",size=3)
   }else if(type==4){
     ucl_goalkeeping_key_stat %>% ggplot(aes(x=save_rate,y=mean_save,label=player_name))+
       ggtitle("Goalkeeper's key statistics",)+geom_point()+
@@ -67,14 +84,25 @@ player_plotter2 <- function(type,pname){
 
 
 # plot additional distribution of a category
-# goalkeeper-passing defender-passing midfielder-attacking attacker-passing
-player_plotter3 <- function(type,pname){
+# goalkeeper-passing defender-recover & clearance midfielder-attacking attacker-passing
+player_plotter_addition <- function(type,pname){
   if (type==1){
     
   }else if(type==2){
     
   }else if(type==3){
-    
+    ucl_defender_final %>% ggplot(aes(x=balls_recoverd/minutes_played*90,y=clearance_attempted/minutes_played*90))+
+      ggtitle("Defender's recover & clearance",)+geom_point()+
+      scale_x_continuous("win balls(/90min)",limits = c(0.5,11.5))+
+      scale_y_continuous("attempts to clear the ball(/90min)",limits = c(0,10))+
+      geom_hline(yintercept = 2.83,col = "blue") + geom_vline(xintercept = 5.41, col = "blue") +
+      theme(plot.title = element_text(size = 15, face = "bold"),
+            axis.title = element_text(size = 15, face = "bold"))+
+      geom_label(data=ucl_defender_final %>% filter(player_name==pname),
+                 nudge_x = 0.5, nudge_y = 0.5,
+                 aes(label=paste(player_name,", ", club)))+
+      geom_point(data=ucl_defender_final %>% filter(player_name==pname),
+                 aes(x=balls_recoverd/minutes_played*90,y=clearance_attempted/minutes_played*90), color="red",size=3)
   }else if(type==4){
     ucl_goalkeeping_final %>% ggplot(aes(x=mean_pass,y=pass_accuracy))+
       ggtitle("Goalkeeper's passing statistics",)+geom_point()+
@@ -91,14 +119,24 @@ player_plotter3 <- function(type,pname){
 }
 
 # plot additional distribution of a category
-# goalkeeper-punch defender-attacking midfielder-defend attacker-defend
-player_plotter4 <- function(type,pname){
+# goalkeeper-punch defender-passing midfielder-defend attacker-defend
+player_plotter_addition2 <- function(type,pname){
   if (type==1){
     
   }else if(type==2){
     
   }else if(type==3){
-    
+    ucl_defender_final %>% ggplot(aes(x=pass_attempted/minutes_played*90,y=pass_accuracy))+
+      ggtitle("Defender's passing statistics",)+geom_point()+
+      scale_x_continuous("mean pass(/90min)",limits = c(0,110))+scale_y_continuous("pass accuracy(%)",limits = c(40,100))+
+      geom_hline(yintercept = 83.81,col = "blue") + geom_vline(xintercept = 50.27, col = "blue") +
+      theme(plot.title = element_text(size = 15, face = "bold"),
+            axis.title = element_text(size = 15, face = "bold"))+
+      geom_label(data=ucl_defender_final %>% filter(player_name==pname),
+                 nudge_x = 1, nudge_y = 3,
+                 aes(label=paste(player_name,", ", club)))+
+      geom_point(data=ucl_defender_final %>% filter(player_name==pname),
+                 aes(x=pass_attempted/minutes_played*90,y=pass_accuracy), color="red",size=3)
   }else if(type==4){
     ucl_goalkeeping_final %>% ggplot(aes(x=punches.made))+
       ggtitle("Goalkeeper's punches tendency",)+
@@ -113,7 +151,7 @@ player_plotter4 <- function(type,pname){
 }
 
 # plot player's discipline
-player_plotter5 <- function(type,pname){
+player_plotter_discipline <- function(type,pname){
   posi <- "Goalkeeper"
   if (type==1){
     posi <- "Forward"
@@ -165,9 +203,13 @@ s_team_input <- function(num){
 }
 
 s_player_input <- function(num){
-  if(num!=4){
+  if(num==1){
     cho <- ucl_key_stats[,1]
-  }else{
+  }else if (num==2){
+    cho <- ucl_key_stats[,1]
+  }else if (num==3){
+    cho <- ucl_defender_final[,1]
+  }else if (num==4){
     cho <- ucl_goalkeeping[,2]
   }
   
