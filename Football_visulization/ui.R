@@ -34,6 +34,7 @@ shinyUI(fluidPage(
           uiOutput("main_header"),
           uiOutput("main_selector"),
           uiOutput("main_searcher"),
+          ## modified plot's sequence
           column(12,align='center',plotOutput("plotter_main_res")),
           column(12,
                  column(6,plotOutput("plotter_radar")),
