@@ -95,7 +95,7 @@ shinyServer(function(input, output) {
     
     output$plotter_discipline<-renderPlot({
       if (as.numeric(input$type)==1){
-        player_plotter5(input$player_data_mode, input$player_name)
+        player_plotter_discipline(input$player_data_mode, input$player_name)
       }
     })
     

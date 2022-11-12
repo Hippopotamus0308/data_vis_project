@@ -87,6 +87,8 @@ ucl_midfielder_final <- merge(ucl_midfielder_final,ucl_midfielder_defend, by="pl
 ucl_midfielder_final <- merge(ucl_midfielder_final,ucl_midfielder_passing, by="player_name")
 ucl_midfielder_final[is.na(ucl_midfielder_final)] <- 0
 
+ucl_midfielder_final[,8] <- as.numeric(unlist(ucl_midfielder_final[,8]))
+
 ucl_midfielder_final <- distinct(ucl_midfielder_final,player_name,.keep_all = T)
 
 ucl_midfielder_key_stat <- ucl_midfielder_final[c(1,4,6,7,8,9,10,11,13,14,15)]
@@ -105,4 +107,48 @@ colnames(ucl_midfielder_radar)[1] <- c("create_goals")
 colnames(ucl_midfielder_radar)[2] <- c("distance_covered")
 colnames(ucl_midfielder_radar)[4] <- c("tackle_won")
 
+ucl_midfielder_max_min_average <- data.frame(
+  create_goals = c(1.64, 0, 0.25), distance_covered = c(13.8,7.8,11.5), balls_recoverd = c(9.08, 0.3, 3.87),
+  tackle_won = c(3.76, 0, 0.61), pass_accuracy = c(98, 35.70, 82.19), pass_attempted = c(99.89, 12.83, 45.78)
+)
+
+rownames(ucl_midfielder_max_min_average) <- c("Max", "Min", "Average")
+ucl_midfielder_radar <- rbind(ucl_midfielder_max_min_average, ucl_midfielder_radar)
+
+
 # deal with attacker data
+ucl_forward_passing <- (ucl_distribution %>% filter(position=='Forward'))[c(2,5,6,9,10)]
+ucl_forward_attack1 <- (ucl_attempts %>% filter(position=='Forward'))[c(2,5,6,7,8)]
+ucl_forward_final <- ucl_key_stats %>% filter(position=='Forward')
+ucl_forward_final <- merge(ucl_forward_final,ucl_forward_passing, by="player_name")
+ucl_forward_final <- merge(ucl_forward_final,ucl_forward_attack1, by="player_name")
+ucl_forward_final[is.na(ucl_forward_final)] <- 0
+
+ucl_forward_final <- distinct(ucl_forward_final,player_name,.keep_all = T)
+
+ucl_forward_key_stat <- ucl_forward_final[c(1,4,6,7,8,9,10,11,12,13,14)]
+
+## Forward radar data
+### pass_accuracy, pass_attempted, distance_covered, attempts, attempts_on_target, cross, goal+assist per 90 minutes
+ucl_forward_radar <- cbind(ucl_forward_key_stat[1],
+                              (ucl_forward_key_stat[3]+ucl_forward_key_stat[4])/ucl_forward_key_stat[2]*90,
+                              apply(ucl_forward_key_stat[5],2,as.numeric)/ucl_forward_key_stat[2]*90,
+                              ucl_forward_key_stat[7]/ucl_forward_key_stat[2]*90,ucl_forward_key_stat[6],
+                              ucl_forward_key_stat[8]/ucl_forward_key_stat[2]*90,
+                              ucl_forward_key_stat[10]/ucl_forward_key_stat[2]*90,
+                              ucl_forward_key_stat[11]/ucl_forward_key_stat[2]*90)
+rownames(ucl_forward_radar) <- ucl_forward_radar$player_name
+ucl_forward_radar <- ucl_forward_radar[c(2,3,4,5,6,7,8)]
+colnames(ucl_forward_radar)[1] <- c("create_goals")
+colnames(ucl_forward_radar)[2] <- c("distance_covered")
+colnames(ucl_forward_radar)[6] <- c("total_shoots")
+colnames(ucl_forward_radar)[7] <- c("shoots_on_target")
+
+ucl_forward_max_min_average <- data.frame(
+  create_goals = c(2.2, 0, 0.75), distance_covered = c(12.7, 8.39, 10.92), pass_attempted = c(79.7, 9, 29.56),
+  pass_accuracy = c(93.6, 36.5, 75.16), cross_attempted = c(7.38, 0, 1.54), total_shoots = c(6.78, 0.3, 2.38),
+  shoots_on_target = c(3.1, 0, 0.9)
+)
+
+rownames(ucl_forward_max_min_average) <- c("Max", "Min", "Average")
+ucl_forward_radar <- rbind(ucl_forward_max_min_average, ucl_forward_radar)
