@@ -152,3 +152,24 @@ ucl_forward_max_min_average <- data.frame(
 
 rownames(ucl_forward_max_min_average) <- c("Max", "Min", "Average")
 ucl_forward_radar <- rbind(ucl_forward_max_min_average, ucl_forward_radar)
+
+
+## La liga Teams data
+laliga_team <-  read.csv('./data/LL/laliga21-22.csv')
+laliga_team <- laliga_team[,-1]
+
+### laliga radar
+laliga_radar <- laliga_team[c('Squad','GF','GD','age','poss','XG90','Save.per','pass.completion')]
+rownames(laliga_radar)<-laliga_radar$Squad
+laliga_radar <- laliga_radar[,-1]
+
+laliga_max_min_average <- data.frame(
+  GF = c(80,31,47.8), GD = c(49,-34,0), age = c(29.1,24.8,27.7),
+  poss = c(64.8,40.9,50.2), XG90 =c(1.96,0.78,1.23), Save.per = c(77.2,60.1,69.9),
+  pass.completion = c(87.7,69.7,77.8)
+)
+
+rownames(laliga_max_min_average) <- c('Max','Min','Average')
+laliga_radar <- rbind(laliga_max_min_average,laliga_radar)
+
+colnames(laliga_radar)<-c('Goal scored','Goal difference','age','possession %','expeced goals/90min','save %','pass %')

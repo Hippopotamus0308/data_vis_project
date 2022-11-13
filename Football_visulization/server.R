@@ -72,6 +72,8 @@ shinyServer(function(input, output) {
     output$plotter_radar<-renderPlot({
       if (as.numeric(input$type)==1){
         player_plotter_radar(input$player_data_mode, input$player_name)
+      }else if (as.numeric(input$type)==2){
+        team_plotter_radar(input$mode, input$team_data_mode, input$team_name)
       }
     })
     

@@ -5,32 +5,65 @@ library(fmsb)
 # radar chart for a certain player / average data
 player_plotter_radar <- function(type, player_name){
   if (type==1){
-    par(mar=c(5, 1, 5, 1), xpd=TRUE)
-    football_radarchart(ucl_forward_radar[c("Max","Min","Average",player_name),],"Attacker radar chart", color = c("blue","red"))
-    legend(
-      x = "bottom", legend = c("Average",player_name), horiz = TRUE,
-      bty = "n", pch = 20 , col = c("blue", "red"), text.col = "black",
-      inset=c(0,-0.1),
-      xpd = TRUE
-    )
+    if(player_name==''){
+      par(mar=c(5, 1, 5, 1), xpd=TRUE)
+      football_radarchart(ucl_forward_radar[c("Max","Min","Average"),],"Attacker radar chart", color = c("blue","red"))
+      legend(
+        x = "bottom", legend = c("Average"), horiz = TRUE,
+        bty = "n", pch = 20 , col = c("blue", "red"), text.col = "black",
+        inset=c(0,-0.1),
+        xpd = TRUE
+      )
+    }else{
+      par(mar=c(5, 1, 5, 1), xpd=TRUE)
+      football_radarchart(ucl_forward_radar[c("Max","Min","Average",player_name),],"Attacker radar chart", color = c("blue","red"))
+      legend(
+        x = "bottom", legend = c("Average",player_name), horiz = TRUE,
+        bty = "n", pch = 20 , col = c("blue", "red"), text.col = "black",
+        inset=c(0,-0.1),
+        xpd = TRUE
+      )
+    }
   }else if(type==2){
-    par(mar=c(5, 1, 5, 1), xpd=TRUE)
-    football_radarchart(ucl_midfielder_radar[c("Max","Min","Average",player_name),],"Midfielder radar chart", color = c("blue","red"))
-    legend(
-      x = "bottom", legend = c("Average",player_name), horiz = TRUE,
-      bty = "n", pch = 20 , col = c("blue", "red"), text.col = "black",
-      inset=c(0,-0.1),
-      xpd = TRUE
-    )
+    if(player_name==''){
+      par(mar=c(5, 1, 5, 1), xpd=TRUE)
+      football_radarchart(ucl_midfielder_radar[c("Max","Min","Average"),],"Midfielder radar chart", color = c("blue","red"))
+      legend(
+        x = "bottom", legend = c("Average"), horiz = TRUE,
+        bty = "n", pch = 20 , col = c("blue", "red"), text.col = "black",
+        inset=c(0,-0.1),
+        xpd = TRUE
+      )
+    }else{
+      par(mar=c(5, 1, 5, 1), xpd=TRUE)
+      football_radarchart(ucl_midfielder_radar[c("Max","Min","Average",player_name),],"Midfielder radar chart", color = c("blue","red"))
+      legend(
+        x = "bottom", legend = c("Average",player_name), horiz = TRUE,
+        bty = "n", pch = 20 , col = c("blue", "red"), text.col = "black",
+        inset=c(0,-0.1),
+        xpd = TRUE
+      )
+    }
   }else if(type==3){
-    par(mar=c(5, 1, 5, 1), xpd=TRUE)
-    football_radarchart(ucl_defender_radar[c("Max","Min","Average",player_name),],"Defender radar chart", color = c("blue","red"))
-    legend(
-      x = "bottom", legend = c("Average",player_name), horiz = TRUE,
-      bty = "n", pch = 20 , col = c("blue", "red"), text.col = "black",
-      inset=c(0,-0.1),
-      xpd = TRUE
-    )
+    if(player_name==''){
+      par(mar=c(5, 1, 5, 1), xpd=TRUE)
+      football_radarchart(ucl_defender_radar[c("Max","Min","Average"),],"Defender radar chart", color = c("blue","red"))
+      legend(
+        x = "bottom", legend = c("Average",), horiz = TRUE,
+        bty = "n", pch = 20 , col = c("blue", "red"), text.col = "black",
+        inset=c(0,-0.1),
+        xpd = TRUE
+      )
+    }else{
+      par(mar=c(5, 1, 5, 1), xpd=TRUE)
+      football_radarchart(ucl_defender_radar[c("Max","Min","Average",player_name),],"Defender radar chart", color = c("blue","red"))
+      legend(
+        x = "bottom", legend = c("Average",player_name), horiz = TRUE,
+        bty = "n", pch = 20 , col = c("blue", "red"), text.col = "black",
+        inset=c(0,-0.1),
+        xpd = TRUE
+      )
+    }
   }else if(type==4){
     if(player_name==""){
       par(mar=c(4, 1, 1, 1), xpd=TRUE)
@@ -52,6 +85,59 @@ player_plotter_radar <- function(type, player_name){
       )
     }
     
+  }
+}
+
+# radar chart for certain team
+team_plotter_radar <- function(mode, team_data_mode, team_name){
+  if (mode==4 || mode==5 || mode==6){
+    if(team_data_mode==1){
+      if(team_name==""){
+        par(mar=c(4, 1, 1, 1), xpd=TRUE)
+        football_radarchart(laliga_radar[c("Max","Min","Average"),],"Goalkeeper radar chart")
+        legend(
+          x = "bottom", legend = c("Average"), horiz = TRUE,
+          bty = "n", pch = 20 , col = c("blue"), text.col = "black",
+          inset=c(0,-0.1),
+          xpd = TRUE
+        )
+      }else{
+        par(mar=c(4, 1, 1, 1), xpd=TRUE)
+        football_radarchart(laliga_radar[c("Max","Min","Average",team_name),],"Goalkeeper radar chart", color = c("blue","red"))
+        legend(
+          x = "bottom", legend = c("Average",team_name), horiz = TRUE,
+          bty = "n", pch = 20 , col = c("blue", "red"), text.col = "black",
+          inset=c(0,-0.1),
+          xpd = TRUE
+        )
+      }
+    }else{
+      
+    }
+  }else{
+    if(team_data_mode==1){
+      if(team_name==""){
+        par(mar=c(4, 1, 1, 1), xpd=TRUE)
+        football_radarchart(laliga_radar[c("Max","Min","Average"),],"Goalkeeper radar chart")
+        legend(
+          x = "bottom", legend = c("Average"), horiz = TRUE,
+          bty = "n", pch = 20 , col = c("blue"), text.col = "black",
+          inset=c(0,-0.1),
+          xpd = TRUE
+        )
+      }else{
+        par(mar=c(4, 1, 1, 1), xpd=TRUE)
+        football_radarchart(laliga_radar[c("Max","Min","Average",team_name),],"Goalkeeper radar chart", color = c("blue","red"))
+        legend(
+          x = "bottom", legend = c("Average",team_name), horiz = TRUE,
+          bty = "n", pch = 20 , col = c("blue", "red"), text.col = "black",
+          inset=c(0,-0.1),
+          xpd = TRUE
+        )
+      }
+    }else{
+      
+    }
   }
 }
 
@@ -220,7 +306,7 @@ player_plotter_addition2 <- function(type,pname){
             axis.title = element_text(size = 15, face = "bold"))+
       geom_vline(xintercept = (ucl_goalkeeping_final %>% filter(player_name==pname))[,9],col = "red") +
       geom_label(data=ucl_goalkeeping_final %>% filter(player_name==pname),
-                 aes(x=punches.made,y=0.25,label=player_name))
+                 aes(y=0.25,label=player_name))
   }
 }
 
@@ -261,19 +347,26 @@ player_plotter_discipline <- function(type,pname){
 
 s_team_input <- function(num){
   if(num==6||num==8){
-    pholder <- "AC Milan"
+    cho <- laliga_team[,1]
   }else if (num==4||num==5||num==7){
-    pholder <- "Real Madrid"
+    cho <- laliga_team[,1]
   }
   
-  searchInput(
-    inputId = 'team_name',
-    label = "Search for a team, click search icon to update or hit 'Enter'",
-    placeholder = pholder,
-    btnSearch = icon("search"),
-    btnReset = icon('remove'),
-    width = '100%'
+  pickerInput(
+    inputId = "team_name",
+    label = "Search for a team, click to choose",
+    choices = cho,
+    options = list(`live-search`=TRUE)
   )
+  
+  # searchInput(
+  #   inputId = 'team_name',
+  #   label = "Search for a team, click search icon to update or hit 'Enter'",
+  #   placeholder = pholder,
+  #   btnSearch = icon("search"),
+  #   btnReset = icon('remove'),
+  #   width = '100%'
+  # )
 }
 
 s_player_input <- function(num){
