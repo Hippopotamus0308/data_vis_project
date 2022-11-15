@@ -25,12 +25,16 @@ shinyServer(function(input, output) {
                      selected = 1)
       }else if (input$type == 2){
         awesomeRadio("mode",h3("Select the statistics"),
-                     choices = list("Team statistics in UCL"=4,"Team statistics in La Liga"=5,"Team statistics in Serie A"=6),
+                     choices = list("Team statistics in Serie A"=4,"Team statistics in La Liga"=5),
                      selected = 4)
       }else if (input$type == 3){
         awesomeRadio("mode",h3("Select the statistics"),
-                     choices = list("Signing suggest for La Liga"=7, "Signing suggestion for Serie A"=8),
-                     selected = 7)
+                     choices = list("Signing suggestion for Serie A"=6,"Signing suggest for La Liga"=7),
+                     selected = 6)
+      }else if(input$type == 4){
+        awesomeRadio("mode",h3("Select the content"),
+                     choices = list("Introduction to purpose"=8,"Data description"=9),
+                     selected = 8)
       }
     })
     
@@ -45,26 +49,30 @@ shinyServer(function(input, output) {
           tabPanel("Defender",value = 3),
           tabPanel("Goalkeeper",value = 4)
         )
-      }else if(as.numeric(input$mode)==4||as.numeric(input$mode)==5 || as.numeric(input$mode)==6){
+      }else if(as.numeric(input$mode)==4||as.numeric(input$mode)==5){
         tabsetPanel(
           id = "team_data_mode",
-          tabPanel("Single Team Statistics",value = 1), 
-          tabPanel("Total Teams",value = 2), 
+          tabPanel("Total Teams",value = 1),
+          tabPanel("Single Team Statistics",value = 2), 
         )
+      }else if(as.numeric(input$mode)==8||as.numeric(input$mode)==9){
+        p(h4("-----------------"),h4(main_description[as.numeric(input$mode)-7]),h4("-----------------"))
       }
     })
     
     output$main_searcher <- renderUI({
-      if (as.numeric(input$type)!=1){
-        if(!(as.numeric(input$type)==2&&as.numeric(input$team_data_mode==2))){
+      if (as.numeric(input$type)!=1&&as.numeric((input$type)!=4)){
+        if(!(as.numeric(input$type)==2&&as.numeric(input$team_data_mode==1))){
           s_team_input(as.numeric(input$mode)) 
         }
-      }else{
+      }else if(as.numeric(input$type)==1){
         if(as.numeric(input$mode!=3)){
           s_player_input(as.numeric(input$player_data_mode))
         }else{
           s_multi_input()
         }
+      }else if(as.numeric(input$type)==4){
+        h4(main_summary[as.numeric(input$mode)-7])
       }
     })
     

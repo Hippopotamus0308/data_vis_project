@@ -21,8 +21,8 @@ shinyUI(fluidPage(
         column(3,
             awesomeRadio(
               inputId = "type", label = h3("Choose type of statistics:"), 
-              choices = list("Player Statistics"=1, "Team Statistics"=2,"Signing Suggestion"=3),
-              selected = 1,
+              choices = list("Introduction"=4,"Player Statistics"=1, "Team Statistics"=2,"Signing Suggestion"=3),
+              selected = 4,
             ),
             
             uiOutput("detail"),

@@ -3,8 +3,14 @@ library(tidyr)
 library(dplyr)
 
 main_plot_header_set <- c("Player statistics in UCL","Player statistics in EPL","Player statistics comparation",
-                          "Team statistics in UCL","Team statistics in La Liga","Team statistics in Serie A",
-                          "Signing suggest for La Liga", "Signing suggestion for Serie A")
+                          "Team statistics in Serie A","Team statistics in La Liga",
+                          "Signing suggestion for Serie A","Signing suggest for La Liga", 
+                          "Introduction-Purpose","Introduction-Data")
+main_description <- c("This project try to visulize players performance in UCL last season, as well as La Liga & Serie A's team statistics. Apart from visulization, this project also offers some signing advices towards La Liga & Serie A teams.",
+                      "I collected season 2021-2022's UCL player data, and 2021-2022's La Liga & Serie A's team data. Data includes player/team's attacking, defense, possesion and passing statistics.")
+
+main_summary <- c("All code and data can be found on github: ",
+                  "Raw data is on kaggle, data is cleaned to be used in this project.")
 
 ucl_attacking <- read.csv('./data/UCL/attacking.csv')
 ucl_attempts <- read.csv('./data/UCL/attempts.csv')
@@ -158,6 +164,10 @@ ucl_forward_radar <- rbind(ucl_forward_max_min_average, ucl_forward_radar)
 laliga_team <-  read.csv('./data/LL/laliga21-22.csv')
 laliga_team <- laliga_team[,-1]
 
+laliga_res <- laliga_team[c('Squad','W','D','L','Pts')]
+colnames(laliga_res) <- c('Squad','Win','Draw','Lose','Pts')
+laliga_res_long <- laliga_res %>% pivot_longer(Win:Lose,names_to = 'result',values_to = 'number')
+
 ### laliga radar
 laliga_radar <- laliga_team[c('Squad','GF','GD','age','poss','XG90','Save.per','pass.completion')]
 rownames(laliga_radar)<-laliga_radar$Squad
@@ -173,3 +183,37 @@ rownames(laliga_max_min_average) <- c('Max','Min','Average')
 laliga_radar <- rbind(laliga_max_min_average,laliga_radar)
 
 colnames(laliga_radar)<-c('Goal scored','Goal difference','age','possession %','expeced goals/90min','save %','pass %')
+
+
+## Serie A Teams data
+serieA_general <- read.delim('./data/SA/SerieA-Team-Standard-Stats.csv',sep = ';')
+serieA_general <- serieA_general[c('Squad','Age','Poss','PerAst','CrdY','CrdR','PerxA')]
+serieA_league <- read.delim('./data/SA/SerieA-Team-League-Stats.csv',sep = ';')
+serieA_league <- serieA_league[c('Squad','W','D','L','Pts','GF','GD','xG','xGA','xGD.90')]
+serieA_defense <- read.delim('./data/SA/SerieA-Team-Defensive-Actions.csv',sep = ';')
+serieA_defense <- serieA_defense[c('Squad','TotTkl','TotTklW','PressTot','PressRt','TklpInt')]
+serieA_score <- read.delim('./data/SA/SerieA-Team-Shooting-Stats.csv',sep = ';')
+serieA_score <- serieA_score[c('Squad','Gls','Shd90','SoTd90','xG')]
+serieA_pass <- read.delim('./data/SA/SerieA-Team-Passing-Stats.csv',sep = ';')
+serieA_pass <- serieA_pass[c('Squad','AttTot','TotCmpRt','Ast','xA','KP','ProgPs')]
+serieA_possess <- read.delim('./data/SA/SerieA-Team-Possession-Stats.csv',sep = ';')
+serieA_possess <- serieA_possess[c('Squad','Poss','TotTouc','SuccDrib','AttDrib','ProgCarr','ProgRec')]
+
+serieA_res <- serieA_league[c('Squad','W','D','L','Pts')]
+colnames(serieA_res) <- c('Squad','Win','Draw','Lose','Pts')
+serieA_res_long <- serieA_res %>% pivot_longer(Win:Lose,names_to = 'result',values_to = 'number')
+
+## Serie A radar 
+serieA_radar <- cbind(serieA_general[c('Squad','Age')],
+                      serieA_defense[c('TotTklW','PressRt')],serieA_score[c('Gls','xG')],serieA_pass['Ast'],
+                      serieA_possess['Poss'])
+rownames(serieA_radar) <- serieA_radar$Squad
+serieA_radar <- serieA_radar[,-1]
+serieA_max_min_average <- data.frame(
+  Age = c(29,24.4,26.8), TotTklW = c(489,306,390.7), PressRt = c(32.3,26.7, 29.8),
+  Gls = c(83,26,52.6), xG =c(81.4,36.1,51.4), Ast = c(57,19, 34.4),
+  Poss = c(58.5,41,50)
+)
+rownames(serieA_max_min_average) <- c('Max','Min','Average')
+serieA_radar <- rbind(serieA_max_min_average,serieA_radar)
+colnames(serieA_radar)<- c('Age','Tackle won','Press rate','Goals','Expect Goal','Assist','Possesion')

@@ -90,8 +90,8 @@ player_plotter_radar <- function(type, player_name){
 
 # radar chart for certain team
 team_plotter_radar <- function(mode, team_data_mode, team_name){
-  if (mode==4 || mode==5 || mode==6){
-    if(team_data_mode==1){
+  if (mode==5){
+    if(team_data_mode==2){
       if(team_name==""){
         par(mar=c(4, 1, 1, 1), xpd=TRUE)
         football_radarchart(laliga_radar[c("Max","Min","Average"),],"Goalkeeper radar chart")
@@ -112,13 +112,14 @@ team_plotter_radar <- function(mode, team_data_mode, team_name){
         )
       }
     }else{
-      
+      laliga_res_long %>% ggplot(aes(x=reorder(factor(Squad),-Pts),weight=number,fill = result))+geom_bar()+
+        labs(x='Team names', fill='Results')
     }
-  }else{
-    if(team_data_mode==1){
+  }else if(mode==4){
+    if(team_data_mode==2){
       if(team_name==""){
         par(mar=c(4, 1, 1, 1), xpd=TRUE)
-        football_radarchart(laliga_radar[c("Max","Min","Average"),],"Goalkeeper radar chart")
+        football_radarchart(serieA_radar[c("Max","Min","Average"),],"Goalkeeper radar chart")
         legend(
           x = "bottom", legend = c("Average"), horiz = TRUE,
           bty = "n", pch = 20 , col = c("blue"), text.col = "black",
@@ -127,7 +128,7 @@ team_plotter_radar <- function(mode, team_data_mode, team_name){
         )
       }else{
         par(mar=c(4, 1, 1, 1), xpd=TRUE)
-        football_radarchart(laliga_radar[c("Max","Min","Average",team_name),],"Goalkeeper radar chart", color = c("blue","red"))
+        football_radarchart(serieA_radar[c("Max","Min","Average",team_name),],"Goalkeeper radar chart", color = c("blue","red"))
         legend(
           x = "bottom", legend = c("Average",team_name), horiz = TRUE,
           bty = "n", pch = 20 , col = c("blue", "red"), text.col = "black",
@@ -136,7 +137,8 @@ team_plotter_radar <- function(mode, team_data_mode, team_name){
         )
       }
     }else{
-      
+      serieA_res_long %>% ggplot(aes(x=reorder(factor(Squad),-Pts),weight=number,fill = result))+geom_bar()+
+        labs(x='Team names', fill='Results')
     }
   }
 }
@@ -346,10 +348,11 @@ player_plotter_discipline <- function(type,pname){
 }
 
 s_team_input <- function(num){
-  if(num==6||num==8){
+  cho <- serieA_general[,1]
+  if(num==5||num==7){
     cho <- laliga_team[,1]
-  }else if (num==4||num==5||num==7){
-    cho <- laliga_team[,1]
+  }else if (num==4||num==6){
+    cho <- serieA_general[,1]
   }
   
   pickerInput(
@@ -370,6 +373,7 @@ s_team_input <- function(num){
 }
 
 s_player_input <- function(num){
+  cho <- ucl_forward_final[,1]
   if(num==1){
     cho <- ucl_forward_final[,1]
   }else if (num==2){
