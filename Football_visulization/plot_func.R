@@ -357,7 +357,8 @@ team_plotter_attack <- function(mode, team_data_mode, team_name){
         ggtitle(paste(team_name,"'s ","defense data"))+
         theme(plot.title = element_text(size = 15, face = "bold"),
               axis.title = element_text(size = 15, face = "bold"))+
-        geom_col(aes(x=type,y=value,fill=Squad), position = position_dodge())
+        geom_col(aes(x=type,y=value,fill=Squad), position = position_dodge())+
+        facet_wrap(~type, ncol = 2, scales = 'free')
     }else{ # la liga all team attack
       laliga_all_attack %>% filter(Squad!='average') %>% ggplot(aes(x=goal,y=ex.goal))+
         ggtitle("Laliga teams' attack data")+
@@ -368,9 +369,21 @@ team_plotter_attack <- function(mode, team_data_mode, team_name){
     }
   }else if(mode==4){
     if(team_data_mode==2){ # serie A single team attack
-      
+      serieA_attack_long %>% filter(Squad =='average'| Squad== team_name) %>% ggplot()+
+        ggtitle(paste(team_name,"'s ","attack data"))+
+        theme(plot.title = element_text(size = 15, face = "bold"),
+              axis.title = element_text(size = 15, face = "bold"))+
+        geom_col(aes(x=type,y=value,fill=Squad), position = position_dodge())+
+        xlab("Type of data")+ylab("Value")+
+        facet_wrap(~type, ncol = 2, scales = 'free')
     }else{ # serie A all team attack
-      
+      serieA_all_attack %>% filter(Squad!='average') %>% ggplot(aes(x=shoots.90min,y=goal))+
+        ggtitle("Serie A teams' attacking data")+
+        theme(plot.title = element_text(size = 15, face = "bold"),
+              axis.title = element_text(size = 15, face = "bold"))+
+        geom_label_repel(aes(label=Squad))+
+        geom_hline(yintercept = 52.6,col = "blue") + geom_vline(xintercept = 13, col = "blue") +
+        geom_point()+xlab("Shoot attempts(/90min)")+ylab("Team total goal")
     }
   }
 }
@@ -381,8 +394,8 @@ team_plotter_pass <- function(mode, team_data_mode, team_name){
     if(team_data_mode==2){ # la liga single team pass
       laliga_all_pass %>% filter(Squad!='average') %>% ggplot(aes(x=pass.completion,y=prog.dist))+
         ggtitle(paste(team_name,"'s ","pass data"))+geom_point()+
-        xlab("Possession rate(%)")+ylab("progressive distance moved by the ball(m)")+
-        geom_hline(yintercept = 96080,col = "blue") + geom_vline(xintercept = 50, col = "blue") +
+        xlab("Pass completion rate(%)")+ylab("progressive distance moved by the ball(m)")+
+        geom_hline(yintercept = 96080,col = "blue") + geom_vline(xintercept = 77.8, col = "blue") +
         theme(plot.title = element_text(size = 15, face = "bold"),
               axis.title = element_text(size = 15, face = "bold"))+
         geom_label_repel(data=laliga_all_pass %>% filter(Squad==team_name),
@@ -395,15 +408,27 @@ team_plotter_pass <- function(mode, team_data_mode, team_name){
         theme(plot.title = element_text(size = 15, face = "bold"),
               axis.title = element_text(size = 15, face = "bold"))+
         geom_label_repel(aes(label=Squad))+
-        geom_hline(yintercept = 96080,col = "blue") + geom_vline(xintercept = 50, col = "blue") +
+        geom_hline(yintercept = 96080,col = "blue") + geom_vline(xintercept = 77.8, col = "blue") +
         geom_point()+xlab("Passing completion rate(%)")+ylab("progressive distance moved by the ball(m)")
         
     }
   }else if(mode==4){
     if(team_data_mode==2){ # serie A single team pass
-      
+      serieA_pass_long %>% filter(Squad =='average'| Squad== team_name) %>% ggplot()+
+        ggtitle(paste(team_name,"'s ","passing data"))+
+        theme(plot.title = element_text(size = 15, face = "bold"),
+              axis.title = element_text(size = 15, face = "bold"))+
+        geom_col(aes(x=type,y=value,fill=Squad), position = position_dodge())+
+        xlab("Type of data")+ylab("Value")+
+        facet_wrap(~type, ncol = 2, scales = 'free')
     }else{ # serie A all team pass
-      
+      serieA_all_pass %>% filter(Squad!='average') %>% ggplot(aes(x=Pass,y=Key.pass))+
+        ggtitle(paste(team_name,"'s ","pass data"))+geom_point()+
+        xlab("Total pass attempted")+ylab("Total key pass")+
+        geom_hline(yintercept = 360,col = "blue") + geom_vline(xintercept = 18363, col = "blue") +
+        theme(plot.title = element_text(size = 15, face = "bold"),
+              axis.title = element_text(size = 15, face = "bold"))+
+        geom_label_repel(aes(label=Squad))
     }
   }
 }
@@ -433,9 +458,24 @@ team_plotter_possess <- function(mode, team_data_mode, team_name){
     }
   }else if(mode==4){
     if(team_data_mode==2){ # serie A single team possess
-      
+      serieA_all_possess %>% filter(Squad!='average') %>% ggplot(aes(x=reorder(Squad,Possession),y=Possession))+
+        ggtitle(paste(team_name,"'s ","possess data"))+geom_point()+
+        xlab("Squad(ranked by possession rate)")+ylab("average possession percentage(%)")+
+        geom_hline(yintercept = 50,col = "blue") +
+        theme(plot.title = element_text(size = 15, face = "bold"),
+              axis.title = element_text(size = 15, face = "bold"))+
+        geom_label_repel(data=serieA_all_possess %>% filter(Squad==team_name),
+                         aes(label=Squad))+
+        geom_point(data=serieA_all_possess %>% filter(Squad==team_name),
+                   aes(x=reorder(Squad,Possession),y=Possession), color="red",size=3)
     }else{ # serie A all team possess
-      
+      serieA_all_possess %>% filter(Squad!='average') %>% ggplot(aes(x=reorder(Squad,Possession),y=Possession))+
+        ggtitle("Serie A teams' possess data")+
+        theme(plot.title = element_text(size = 15, face = "bold"),
+              axis.title = element_text(size = 15, face = "bold"))+
+        geom_point()+geom_hline(yintercept = 50,col='blue')+
+        xlab("Squad(ranked by possession rate)")+ylab("average possession percentage(%)")+
+        geom_label_repel(aes(label=ifelse(Possession>57|Possession<42, paste(Squad), "")))
     }
   }
 }
@@ -449,10 +489,10 @@ team_plotter_defense <- function(mode, team_data_mode, team_name){
         theme(plot.title = element_text(size = 15, face = "bold"),
               axis.title = element_text(size = 15, face = "bold"))+
         geom_col(aes(x=type,y=value,fill=Squad), position = position_dodge())+
-        xlab("Type of data")+ylab("Value")
+        xlab("Type of data")+ylab("Value")+
+        facet_wrap(~type, ncol = 2, scales = 'free')
     }else{ # la liga all team defense
       laliga_all_defense %>% filter(Squad!='average') %>% ggplot(aes(x=scored,y=ex.scored))+ggtitle('Teams expect goal against vs goal conceded')+
-        ggtitle("Laliga teams' defense data")+
         theme(plot.title = element_text(size = 15, face = "bold"),
               axis.title = element_text(size = 15, face = "bold"))+
         geom_label_repel(aes(label=Squad))+geom_abline(slope=1,col='blue')+
@@ -460,9 +500,20 @@ team_plotter_defense <- function(mode, team_data_mode, team_name){
     }
   }else if(mode==4){
     if(team_data_mode==2){ # serie A single team defense
-      
+      serieA_defense_long %>% filter(Squad =='average'| Squad== team_name) %>% ggplot()+
+        ggtitle(paste(team_name,"'s ","defense data"))+
+        theme(plot.title = element_text(size = 15, face = "bold"),
+              axis.title = element_text(size = 15, face = "bold"))+
+        geom_col(aes(x=type,y=value,fill=Squad), position = position_dodge())+
+        xlab("Type of data")+ylab("Value")+
+        facet_wrap(~type, ncol = 2, scales = 'free')
     }else{ # serie A all team defense
-      
+      serieA_all_defense %>% filter(Squad!='average') %>% ggplot(aes(x=tackle,y=tackle.win))+ggtitle('Teams defense tackle behaviour')+
+        theme(plot.title = element_text(size = 15, face = "bold"),
+              axis.title = element_text(size = 15, face = "bold"))+
+        geom_label_repel(aes(label=Squad))+
+        geom_hline(yintercept = 391,col = "blue") + geom_vline(xintercept = 637, col = "blue") +
+        geom_point()+xlab("Total tackle attempts")+ylab("Total tackle win time")
     }
   }
 }

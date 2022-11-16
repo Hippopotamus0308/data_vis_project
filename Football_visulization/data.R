@@ -209,7 +209,7 @@ serieA_general <- serieA_general[c('Squad','Age','Poss','PerAst','CrdY','CrdR','
 serieA_league <- read.delim('./data/SA/SerieA-Team-League-Stats.csv',sep = ';')
 serieA_league <- serieA_league[c('Squad','W','D','L','Pts','GF','GD','xG','xGA','xGD.90')]
 serieA_defense <- read.delim('./data/SA/SerieA-Team-Defensive-Actions.csv',sep = ';')
-serieA_defense <- serieA_defense[c('Squad','TotTkl','TotTklW','PressTot','PressRt','TklpInt')]
+serieA_defense <- serieA_defense[c('Squad','TotTkl','TotTklW','PressTot','PressRt')]
 serieA_score <- read.delim('./data/SA/SerieA-Team-Shooting-Stats.csv',sep = ';')
 serieA_score <- serieA_score[c('Squad','Gls','Shd90','SoTd90','xG')]
 serieA_pass <- read.delim('./data/SA/SerieA-Team-Passing-Stats.csv',sep = ';')
@@ -220,6 +220,26 @@ serieA_possess <- serieA_possess[c('Squad','Poss','TotTouc','SuccDrib','AttDrib'
 serieA_res <- serieA_league[c('Squad','W','D','L','Pts')]
 colnames(serieA_res) <- c('Squad','Win','Draw','Lose','Pts')
 serieA_res_long <- serieA_res %>% pivot_longer(Win:Lose,names_to = 'result',values_to = 'number')
+
+serieA_all_attack <- rbind(c('average',52.6,13,4.2,51.4),serieA_score)
+serieA_all_attack[,c(2,3,4,5)] <- as.numeric(unlist(serieA_all_attack[,c(2,3,4,5)]))
+colnames(serieA_all_attack) <- c('Squad','goal','shoots.90min','on.target.90min','ex.goal')
+serieA_attack_long <- serieA_all_attack %>% pivot_longer(goal:ex.goal,names_to = 'type',values_to = 'value')
+
+serieA_all_defense <- rbind(c('average',636.7,390.7,5540,29.8),serieA_defense)
+serieA_all_defense[,c(2,3,4,5)] <- as.numeric(unlist(serieA_all_defense[,c(2,3,4,5)]))
+colnames(serieA_all_defense) <- c('Squad','tackle','tackle.win','press','press.rate')
+serieA_defense_long <- serieA_all_defense %>% pivot_longer(tackle:press.rate,names_to = 'type',values_to = 'value')
+
+serieA_all_pass <- rbind(c('average',18363,79.7,34.4,360,1191),serieA_pass[c('Squad','AttTot','TotCmpRt','Ast','KP','ProgPs')])
+serieA_all_pass[,c(2,3,4,5,6)] <- as.numeric(unlist(serieA_all_pass[,c(2,3,4,5,6)]))
+colnames(serieA_all_pass) <- c('Squad','Pass','Pass.rate','Assist','Key.pass','Progressive.pass')
+serieA_pass_long <- serieA_all_pass %>% pivot_longer(Pass:Key.pass,names_to = 'type',values_to = 'value')
+
+serieA_all_possess <- rbind(c('average',50,22672,297.3,557,1509),serieA_possess[c('Squad','Poss','TotTouc','SuccDrib','AttDrib','ProgCarr')])
+serieA_all_possess[,c(2,3,4,5,6)] <- as.numeric(unlist(serieA_all_possess[,c(2,3,4,5,6)]))
+colnames(serieA_all_possess) <- c('Squad','Possession','Touch.ball','Dribble.success','Total.dribble','Progressive.carry')
+
 
 ## Serie A radar 
 serieA_radar <- cbind(serieA_general[c('Squad','Age')],
