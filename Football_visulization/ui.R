@@ -9,6 +9,9 @@
 
 library(shiny)
 library(shinyWidgets)
+library(shinycssloaders)
+
+options(spinner.color="#0275D8", spinner.color.background="#ffffff", spinner.size=2)
 
 # Define UI for application that draws a histogram
 shinyUI(fluidPage(
@@ -31,17 +34,20 @@ shinyUI(fluidPage(
 
         # Show a plot of the generated distribution
         column(8,
-          uiOutput("main_header"),
-          uiOutput("main_selector"),
-          uiOutput("main_searcher"),
+          withSpinner(uiOutput("main_header"), type = 2),
+          withSpinner(uiOutput("main_selector"), type = 2),
+          withSpinner(uiOutput("main_searcher"), type = 2),
+          #uiOutput("main_header"),
+          #uiOutput("main_selector"),
+          #uiOutput("main_searcher"),
           ## modified plot's sequence
-          column(12,plotOutput("plotter_radar")),
+          column(12,withSpinner(plotOutput("plotter_radar"),type = 2)),
           column(12,
-                 column(6,align='center',plotOutput("plotter_main_res")),
-                 column(6,plotOutput("plotter_addition"))),
+                 column(6,align='center',withSpinner(plotOutput("plotter_main_res"),type=2)),
+                 column(6,withSpinner(plotOutput("plotter_addition"),type=2))),
           column(12,
-                 column(6,plotOutput("plotter_addition2")),
-                 column(6,plotOutput("plotter_discipline"))),
+                 column(6,withSpinner(plotOutput("plotter_addition2"),type=2)),
+                 column(6,withSpinner(plotOutput("plotter_discipline"),type=2))),
         )
     )
 ))

@@ -1,6 +1,8 @@
 library(ggplot2)
 source('data.R')
 library(fmsb)
+library(ggrepel)
+library(shinycssloaders)
 
 # radar chart for a certain player / average data
 player_plotter_radar <- function(type, player_name){
@@ -94,7 +96,7 @@ team_plotter_radar <- function(mode, team_data_mode, team_name){
     if(team_data_mode==2){
       if(team_name==""){
         par(mar=c(4, 1, 1, 1), xpd=TRUE)
-        football_radarchart(laliga_radar[c("Max","Min","Average"),],"Goalkeeper radar chart")
+        football_radarchart(laliga_radar[c("Max","Min","Average"),],"La liga teams radar chart")
         legend(
           x = "bottom", legend = c("Average"), horiz = TRUE,
           bty = "n", pch = 20 , col = c("blue"), text.col = "black",
@@ -103,7 +105,7 @@ team_plotter_radar <- function(mode, team_data_mode, team_name){
         )
       }else{
         par(mar=c(4, 1, 1, 1), xpd=TRUE)
-        football_radarchart(laliga_radar[c("Max","Min","Average",team_name),],"Goalkeeper radar chart", color = c("blue","red"))
+        football_radarchart(laliga_radar[c("Max","Min","Average",team_name),],"La liga teams radar chart", color = c("blue","red"))
         legend(
           x = "bottom", legend = c("Average",team_name), horiz = TRUE,
           bty = "n", pch = 20 , col = c("blue", "red"), text.col = "black",
@@ -119,7 +121,7 @@ team_plotter_radar <- function(mode, team_data_mode, team_name){
     if(team_data_mode==2){
       if(team_name==""){
         par(mar=c(4, 1, 1, 1), xpd=TRUE)
-        football_radarchart(serieA_radar[c("Max","Min","Average"),],"Goalkeeper radar chart")
+        football_radarchart(serieA_radar[c("Max","Min","Average"),],"Serie A teams radar chart")
         legend(
           x = "bottom", legend = c("Average"), horiz = TRUE,
           bty = "n", pch = 20 , col = c("blue"), text.col = "black",
@@ -128,7 +130,7 @@ team_plotter_radar <- function(mode, team_data_mode, team_name){
         )
       }else{
         par(mar=c(4, 1, 1, 1), xpd=TRUE)
-        football_radarchart(serieA_radar[c("Max","Min","Average",team_name),],"Goalkeeper radar chart", color = c("blue","red"))
+        football_radarchart(serieA_radar[c("Max","Min","Average",team_name),],"Serie A teams radar chart", color = c("blue","red"))
         legend(
           x = "bottom", legend = c("Average",team_name), horiz = TRUE,
           bty = "n", pch = 20 , col = c("blue", "red"), text.col = "black",
@@ -346,6 +348,126 @@ player_plotter_discipline <- function(type,pname){
             legend.position = 'none')
   }
 }
+
+## plot teams attack data
+team_plotter_attack <- function(mode, team_data_mode, team_name){
+  if (mode==5){
+    if(team_data_mode==2){ # la liga single team attack
+      laliga_attack_long %>% filter(Squad =='average'| Squad== team_name) %>% ggplot()+
+        ggtitle(paste(team_name,"'s ","defense data"))+
+        theme(plot.title = element_text(size = 15, face = "bold"),
+              axis.title = element_text(size = 15, face = "bold"))+
+        geom_col(aes(x=type,y=value,fill=Squad), position = position_dodge())
+    }else{ # la liga all team attack
+      laliga_all_attack %>% filter(Squad!='average') %>% ggplot(aes(x=goal,y=ex.goal))+
+        ggtitle("Laliga teams' attack data")+
+        theme(plot.title = element_text(size = 15, face = "bold"),
+              axis.title = element_text(size = 15, face = "bold"))+
+        geom_label_repel(aes(label=Squad))+geom_abline(slope=1,col='blue')+
+        geom_point()+xlab("Goals scored(/90min)")+ylab("Expected goals(/90min)")
+    }
+  }else if(mode==4){
+    if(team_data_mode==2){ # serie A single team attack
+      
+    }else{ # serie A all team attack
+      
+    }
+  }
+}
+
+## plot teams pass data
+team_plotter_pass <- function(mode, team_data_mode, team_name){
+  if (mode==5){
+    if(team_data_mode==2){ # la liga single team pass
+      laliga_all_pass %>% filter(Squad!='average') %>% ggplot(aes(x=pass.completion,y=prog.dist))+
+        ggtitle(paste(team_name,"'s ","pass data"))+geom_point()+
+        xlab("Possession rate(%)")+ylab("progressive distance moved by the ball(m)")+
+        geom_hline(yintercept = 96080,col = "blue") + geom_vline(xintercept = 50, col = "blue") +
+        theme(plot.title = element_text(size = 15, face = "bold"),
+              axis.title = element_text(size = 15, face = "bold"))+
+        geom_label_repel(data=laliga_all_pass %>% filter(Squad==team_name),
+                         aes(label=Squad))+
+        geom_point(data=laliga_all_pass %>% filter(Squad==team_name),
+                   aes(x=pass.completion,y=prog.dist), color="red",size=3)
+    }else{ # la liga all team pass
+      laliga_all_pass %>% filter(Squad!='average') %>% ggplot(aes(x=pass.completion,y=prog.dist))+
+        ggtitle("Laliga teams' passing data")+
+        theme(plot.title = element_text(size = 15, face = "bold"),
+              axis.title = element_text(size = 15, face = "bold"))+
+        geom_label_repel(aes(label=Squad))+
+        geom_hline(yintercept = 96080,col = "blue") + geom_vline(xintercept = 50, col = "blue") +
+        geom_point()+xlab("Passing completion rate(%)")+ylab("progressive distance moved by the ball(m)")
+        
+    }
+  }else if(mode==4){
+    if(team_data_mode==2){ # serie A single team pass
+      
+    }else{ # serie A all team pass
+      
+    }
+  }
+}
+
+## plot teams possess data
+team_plotter_possess <- function(mode, team_data_mode, team_name){
+  if (mode==5){
+    if(team_data_mode==2){ # la liga single team possess
+      laliga_all_possess %>% filter(Squad!='average') %>% ggplot(aes(x=poss,y=prog.dist))+
+        ggtitle(paste(team_name,"'s ","possess data"))+geom_point()+
+        xlab("Possession rate(%)")+ylab("progressive distance moved by the ball(m)")+
+        geom_hline(yintercept = 96080,col = "blue") + geom_vline(xintercept = 50, col = "blue") +
+        theme(plot.title = element_text(size = 15, face = "bold"),
+              axis.title = element_text(size = 15, face = "bold"))+
+        geom_label_repel(data=laliga_all_possess %>% filter(Squad==team_name),
+                   aes(label=Squad))+
+        geom_point(data=laliga_all_possess %>% filter(Squad==team_name),
+                   aes(x=poss,y=prog.dist), color="red",size=3)
+    }else{ # la liga all team possess
+      laliga_all_possess %>% filter(Squad!='average') %>% ggplot(aes(x=reorder(Squad,poss),y=poss))+
+        ggtitle("Laliga teams' possess data")+
+        theme(plot.title = element_text(size = 15, face = "bold"),
+              axis.title = element_text(size = 15, face = "bold"))+
+        geom_point()+geom_hline(yintercept = 50,col='blue')+
+        xlab("Squad(ranked by possession rate)")+ylab("average possession percentage(%)")+
+        geom_label_repel(aes(label=ifelse(poss>60|poss<41, paste(Squad), "")))
+    }
+  }else if(mode==4){
+    if(team_data_mode==2){ # serie A single team possess
+      
+    }else{ # serie A all team possess
+      
+    }
+  }
+}
+
+## plot teams defense data
+team_plotter_defense <- function(mode, team_data_mode, team_name){
+  if (mode==5){
+    if(team_data_mode==2){ # la liga single team defense
+      laliga_defense_long %>% filter(Squad =='average'| Squad== team_name) %>% ggplot()+
+        ggtitle(paste(team_name,"'s ","defense data"))+
+        theme(plot.title = element_text(size = 15, face = "bold"),
+              axis.title = element_text(size = 15, face = "bold"))+
+        geom_col(aes(x=type,y=value,fill=Squad), position = position_dodge())+
+        xlab("Type of data")+ylab("Value")
+    }else{ # la liga all team defense
+      laliga_all_defense %>% filter(Squad!='average') %>% ggplot(aes(x=scored,y=ex.scored))+ggtitle('Teams expect goal against vs goal conceded')+
+        ggtitle("Laliga teams' defense data")+
+        theme(plot.title = element_text(size = 15, face = "bold"),
+              axis.title = element_text(size = 15, face = "bold"))+
+        geom_label_repel(aes(label=Squad))+geom_abline(slope=1,col='blue')+
+        geom_point()+xlab("Goals conceded(/90min)")+ylab("Expected goals against(/90min)")
+    }
+  }else if(mode==4){
+    if(team_data_mode==2){ # serie A single team defense
+      
+    }else{ # serie A all team defense
+      
+    }
+  }
+}
+
+
 
 s_team_input <- function(num){
   cho <- serieA_general[,1]

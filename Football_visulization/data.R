@@ -168,6 +168,24 @@ laliga_res <- laliga_team[c('Squad','W','D','L','Pts')]
 colnames(laliga_res) <- c('Squad','Win','Draw','Lose','Pts')
 laliga_res_long <- laliga_res %>% pivot_longer(Win:Lose,names_to = 'result',values_to = 'number')
 
+laliga_all_attack <- rbind(c('average',1.23,1.23,0.82,31.7),laliga_team[c('Squad','GP90','XG90','XA90','shots.per')])
+laliga_all_attack[,c(2,3,4,5)] <- as.numeric(unlist(laliga_all_attack[,c(2,3,4,5)]))
+colnames(laliga_all_attack) <- c('Squad','goal','ex.goal','ex.assist','conversion.rate')
+laliga_all_attack[,5] <- laliga_all_attack[,5]/100
+laliga_attack_long <- laliga_all_attack %>% pivot_longer(goal:conversion.rate,names_to = 'type',values_to = 'value')
+
+laliga_all_pass <- rbind(c('average',77.8,96080),laliga_team[c('Squad','pass.completion','prog.dist')])
+laliga_all_pass[,c(2,3)] <- as.numeric(unlist(laliga_all_pass[,c(2,3)]))
+
+laliga_all_possess <- rbind(c('average',50.1,96080),laliga_team[c('Squad','poss','prog.dist')])
+laliga_all_possess[,c(2,3)] <- as.numeric(unlist(laliga_all_possess[,c(2,3)]))
+
+laliga_all_defense <- rbind(c('average',48.2,47.4,69.9,576.7,50),laliga_team[c('Squad','GA','xGA','Save.per','fouls','aerial.per')])
+laliga_all_defense[,c(2,3,4,5,6)] <- as.numeric(unlist(laliga_all_defense[,c(2,3,4,5,6)]))
+colnames(laliga_all_defense) <- c('Squad','scored','ex.scored','save.per','fouls/game','aerial.per')
+laliga_all_defense[,5] <- laliga_all_defense[,5]/38
+laliga_defense_long <- laliga_all_defense %>% pivot_longer(scored:aerial.per,names_to = 'type',values_to = 'value')
+
 ### laliga radar
 laliga_radar <- laliga_team[c('Squad','GF','GD','age','poss','XG90','Save.per','pass.completion')]
 rownames(laliga_radar)<-laliga_radar$Squad

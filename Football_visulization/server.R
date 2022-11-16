@@ -10,7 +10,7 @@
 library(shiny)
 library(shinyWidgets)
 library(ggplot2)
-
+library(shinycssloaders)
 
 source("data.R")
 source("plot_func.R")
@@ -41,7 +41,8 @@ shinyServer(function(input, output) {
     output$main_header <- renderUI({h3(main_plot_header_set[as.numeric(input$mode)])})
     
     output$main_selector <- renderUI({
-      if (as.numeric(input$mode)==1||as.numeric(input$mode)==2||as.numeric(input$mode)==3){
+      m <- as.numeric(input$mode)
+      if (m%in%c(1,2,3)){
         tabsetPanel(
           id = "player_data_mode",
           tabPanel("Attacker",value = 1), 
@@ -49,20 +50,22 @@ shinyServer(function(input, output) {
           tabPanel("Defender",value = 3),
           tabPanel("Goalkeeper",value = 4)
         )
-      }else if(as.numeric(input$mode)==4||as.numeric(input$mode)==5){
+      }else if(m%in%c(4,5)){
         tabsetPanel(
           id = "team_data_mode",
           tabPanel("Total Teams",value = 1),
           tabPanel("Single Team Statistics",value = 2), 
         )
-      }else if(as.numeric(input$mode)==8||as.numeric(input$mode)==9){
+      }else if(m%in%c(8,9)){
         p(h4("-----------------"),h4(main_description[as.numeric(input$mode)-7]),h4("-----------------"))
+      }else if(m%in%c(6,7)){
+        p(h4("-----------------"),h4(main_description[0]),h4("-----------------"))
       }
     })
     
     output$main_searcher <- renderUI({
-      if (as.numeric(input$type)!=1&&as.numeric((input$type)!=4)){
-        if(!(as.numeric(input$type)==2&&as.numeric(input$team_data_mode==1))){
+      if (as.numeric(input$type)!=1&as.numeric((input$type)!=4)){
+        if(!(as.numeric(input$type)==2&as.numeric(input$team_data_mode==1))){
           s_team_input(as.numeric(input$mode)) 
         }
       }else if(as.numeric(input$type)==1){
@@ -88,24 +91,32 @@ shinyServer(function(input, output) {
     output$plotter_main_res<-renderPlot({
       if (as.numeric(input$type)==1){
         player_plotter_main_res(input$player_data_mode, input$player_name)
+      }else if (as.numeric(input$type)==2){
+        team_plotter_attack(input$mode, input$team_data_mode, input$team_name)
       }
     })
     
     output$plotter_addition<-renderPlot({
       if (as.numeric(input$type)==1){
         player_plotter_addition(input$player_data_mode, input$player_name)
+      }else if (as.numeric(input$type)==2){
+        team_plotter_pass(input$mode, input$team_data_mode, input$team_name)
       }
     })
     
     output$plotter_addition2<-renderPlot({
       if (as.numeric(input$type)==1){
         player_plotter_addition2(input$player_data_mode, input$player_name)
+      }else if (as.numeric(input$type)==2){
+        team_plotter_possess(input$mode, input$team_data_mode, input$team_name)
       }
     })
     
     output$plotter_discipline<-renderPlot({
       if (as.numeric(input$type)==1){
         player_plotter_discipline(input$player_data_mode, input$player_name)
+      }else if (as.numeric(input$type)==2){
+        team_plotter_defense(input$mode, input$team_data_mode, input$team_name)
       }
     })
     
