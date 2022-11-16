@@ -72,7 +72,7 @@ shinyServer(function(input, output) {
         if(as.numeric(input$mode!=3)){
           s_player_input(as.numeric(input$player_data_mode))
         }else{
-          s_multi_input()
+          s_multi_input(as.numeric(input$player_data_mode))
         }
       }else if(as.numeric(input$type)==4){
         h4(main_summary[as.numeric(input$mode)-7])
@@ -82,7 +82,11 @@ shinyServer(function(input, output) {
     
     output$plotter_radar<-renderPlot({
       if (as.numeric(input$type)==1){
-        player_plotter_radar(input$player_data_mode, input$player_name)
+        if(as.numeric(input$mode!=3)){
+          player_plotter_radar(input$player_data_mode, input$player_name)
+        }else{
+          multiplayer_plotter_radar(input$player_data_mode, input$multiplayers)
+        }
       }else if (as.numeric(input$type)==2){
         team_plotter_radar(input$mode, input$team_data_mode, input$team_name)
       }
@@ -90,7 +94,11 @@ shinyServer(function(input, output) {
     
     output$plotter_main_res<-renderPlot({
       if (as.numeric(input$type)==1){
-        player_plotter_main_res(input$player_data_mode, input$player_name)
+        if(as.numeric(input$mode!=3)){
+          player_plotter_main_res(input$player_data_mode, input$player_name)
+        }else{
+          multiplayer_plotter_main_res(input$player_data_mode, input$multiplayers)
+        }
       }else if (as.numeric(input$type)==2){
         team_plotter_attack(input$mode, input$team_data_mode, input$team_name)
       }
@@ -98,7 +106,11 @@ shinyServer(function(input, output) {
     
     output$plotter_addition<-renderPlot({
       if (as.numeric(input$type)==1){
-        player_plotter_addition(input$player_data_mode, input$player_name)
+        if(as.numeric(input$mode!=3)){
+          player_plotter_addition(input$player_data_mode, input$player_name)
+        }else{
+          multiplayer_plotter_addition(input$player_data_mode, input$multiplayers)
+        }
       }else if (as.numeric(input$type)==2){
         team_plotter_pass(input$mode, input$team_data_mode, input$team_name)
       }
@@ -106,7 +118,11 @@ shinyServer(function(input, output) {
     
     output$plotter_addition2<-renderPlot({
       if (as.numeric(input$type)==1){
-        player_plotter_addition2(input$player_data_mode, input$player_name)
+        if(as.numeric(input$mode!=3)){
+          player_plotter_addition2(input$player_data_mode, input$player_name)
+        }else{
+          multiplayer_plotter_addition2(input$player_data_mode, input$multiplayers)
+        }
       }else if (as.numeric(input$type)==2){
         team_plotter_possess(input$mode, input$team_data_mode, input$team_name)
       }
@@ -114,7 +130,11 @@ shinyServer(function(input, output) {
     
     output$plotter_discipline<-renderPlot({
       if (as.numeric(input$type)==1){
-        player_plotter_discipline(input$player_data_mode, input$player_name)
+        if(as.numeric(input$mode!=3)){
+          player_plotter_discipline(input$player_data_mode, input$player_name)
+        }else{
+          multiplayer_plotter_discipline(input$player_data_mode, input$multiplayers)
+        }
       }else if (as.numeric(input$type)==2){
         team_plotter_defense(input$mode, input$team_data_mode, input$team_name)
       }
