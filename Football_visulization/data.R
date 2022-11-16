@@ -12,6 +12,14 @@ main_description <- c("This project try to visulize players performance in UCL l
 main_summary <- c("All code and data can be found on github: ",
                   "Raw data is on kaggle, data is cleaned to be used in this project.")
 
+score_summary <- c("Very impressive score ability.","Average score ability.","Poor score ability.")
+attack_summary <- c("Created large amount of chances.","Be able to create adequate chances","Poor creativity.")
+passing_summary <- c("High passing success rate.","Normal passing success rate.","Make too many mistakes when passing.")
+possess_summary <- c("Love to control ball.","No possession tendency.","Prefer yield ball to opponents.")
+defence_summary <- c("High quality defense.","Normal standard defense.","Poor defense.")
+goalkeeper_summary <- c("Advanced goalkeeper.","Normal goalkeeper.","Poor goalkeeper")
+
+
 ucl_attacking <- read.csv('./data/UCL/attacking.csv')
 ucl_attempts <- read.csv('./data/UCL/attempts.csv')
 ucl_defend <- read.csv('./data/UCL/defending.csv')
@@ -187,27 +195,28 @@ laliga_all_defense[,5] <- laliga_all_defense[,5]/38
 laliga_defense_long <- laliga_all_defense %>% pivot_longer(scored:aerial.per,names_to = 'type',values_to = 'value')
 
 ### laliga radar
-laliga_radar <- laliga_team[c('Squad','GF','GD','age','poss','XG90','Save.per','pass.completion')]
+laliga_radar <- laliga_team[c('Squad','GF','GA','age','poss','XA90','Save.per','pass.completion')]
 rownames(laliga_radar)<-laliga_radar$Squad
 laliga_radar <- laliga_radar[,-1]
+laliga_radar['GA'] <- 0-laliga_radar['GA']
 
 laliga_max_min_average <- data.frame(
-  GF = c(80,31,47.8), GD = c(49,-34,0), age = c(29.1,24.8,27.7),
-  poss = c(64.8,40.9,50.2), XG90 =c(1.96,0.78,1.23), Save.per = c(77.2,60.1,69.9),
+  GF = c(80,31,47.8), GA = c(-30,-76,-48.2), age = c(29.1,24.8,27.7),
+  poss = c(64.8,40.9,50.2), XA90 =c(1.35,0.52,0.82), Save.per = c(77.2,60.1,69.9),
   pass.completion = c(87.7,69.7,77.8)
 )
 
 rownames(laliga_max_min_average) <- c('Max','Min','Average')
 laliga_radar <- rbind(laliga_max_min_average,laliga_radar)
 
-colnames(laliga_radar)<-c('Goal scored','Goal difference','age','possession %','expeced goals/90min','save %','pass %')
+colnames(laliga_radar)<-c('Goal scored','Goal conceded','age','possession rate','expeced assists 90min','save rate','pass rate')
 
 
 ## Serie A Teams data
 serieA_general <- read.delim('./data/SA/SerieA-Team-Standard-Stats.csv',sep = ';')
 serieA_general <- serieA_general[c('Squad','Age','Poss','PerAst','CrdY','CrdR','PerxA')]
 serieA_league <- read.delim('./data/SA/SerieA-Team-League-Stats.csv',sep = ';')
-serieA_league <- serieA_league[c('Squad','W','D','L','Pts','GF','GD','xG','xGA','xGD.90')]
+serieA_league <- serieA_league[c('Squad','W','D','L','Pts','GF','GA','xG','xGA','xGD.90')]
 serieA_defense <- read.delim('./data/SA/SerieA-Team-Defensive-Actions.csv',sep = ';')
 serieA_defense <- serieA_defense[c('Squad','TotTkl','TotTklW','PressTot','PressRt')]
 serieA_score <- read.delim('./data/SA/SerieA-Team-Shooting-Stats.csv',sep = ';')
@@ -243,15 +252,17 @@ colnames(serieA_all_possess) <- c('Squad','Possession','Touch.ball','Dribble.suc
 
 ## Serie A radar 
 serieA_radar <- cbind(serieA_general[c('Squad','Age')],
-                      serieA_defense[c('TotTklW','PressRt')],serieA_score[c('Gls','xG')],serieA_pass['Ast'],
+                      serieA_defense[c('TotTklW')],serieA_score[c('Gls')],serieA_pass[c('TotCmpRt','KP')],
                       serieA_possess['Poss'])
+serieA_gp_radar <- cbind(serieA_league['Squad'],serieA_league['xGA']-serieA_league['GA'])
+serieA_radar <- merge(serieA_radar,serieA_gp_radar,by='Squad')
 rownames(serieA_radar) <- serieA_radar$Squad
 serieA_radar <- serieA_radar[,-1]
 serieA_max_min_average <- data.frame(
-  Age = c(29,24.4,26.8), TotTklW = c(489,306,390.7), PressRt = c(32.3,26.7, 29.8),
-  Gls = c(83,26,52.6), xG =c(81.4,36.1,51.4), Ast = c(57,19, 34.4),
-  Poss = c(58.5,41,50)
+  Age = c(29,24.4,26.8), TotTklW = c(489,306,390.7), 
+  Gls = c(83,26,52.6), TotCmpRt = c(85.7, 73, 79.7),
+  KP =c(502,253,360), Poss = c(58.5,41,50), xGA = c(7.2,-12.1, -3.1)
 )
 rownames(serieA_max_min_average) <- c('Max','Min','Average')
 serieA_radar <- rbind(serieA_max_min_average,serieA_radar)
-colnames(serieA_radar)<- c('Age','Tackle won','Press rate','Goals','Expect Goal','Assist','Possesion')
+colnames(serieA_radar)<- c('Age','Tackle won','Goals','Passing rate','Key pass','Possesion','Saved expected goals')

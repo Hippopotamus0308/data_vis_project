@@ -138,7 +138,7 @@ multiplayer_plotter_radar <- function(type, players){
 
 # radar chart for certain team
 team_plotter_radar <- function(mode, team_data_mode, team_name){
-  if (mode==5){
+  if (mode==5 | mode ==7){
     if(team_data_mode==2){
       if(team_name==""){
         par(mar=c(4, 1, 1, 1), xpd=TRUE)
@@ -151,7 +151,7 @@ team_plotter_radar <- function(mode, team_data_mode, team_name){
         )
       }else{
         par(mar=c(4, 1, 1, 1), xpd=TRUE)
-        football_radarchart(laliga_radar[c("Max","Min","Average",team_name),],"La liga teams radar chart", color = c("blue","red"))
+        football_radarchart(laliga_radar[c("Max","Min","Average",team_name),],paste(team_name,"'s radar chart"), color = c("blue","red"))
         legend(
           x = "bottom", legend = c("Average",team_name), horiz = TRUE,
           bty = "n", pch = 20 , col = c("blue", "red"), text.col = "black",
@@ -163,7 +163,7 @@ team_plotter_radar <- function(mode, team_data_mode, team_name){
       laliga_res_long %>% ggplot(aes(x=reorder(factor(Squad),-Pts),weight=number,fill = result))+geom_bar()+
         labs(x='Team names', fill='Results')
     }
-  }else if(mode==4){
+  }else if(mode==4 | mode==6){
     if(team_data_mode==2){
       if(team_name==""){
         par(mar=c(4, 1, 1, 1), xpd=TRUE)
@@ -176,7 +176,7 @@ team_plotter_radar <- function(mode, team_data_mode, team_name){
         )
       }else{
         par(mar=c(4, 1, 1, 1), xpd=TRUE)
-        football_radarchart(serieA_radar[c("Max","Min","Average",team_name),],"Serie A teams radar chart", color = c("blue","red"))
+        football_radarchart(serieA_radar[c("Max","Min","Average",team_name),],paste(team_name,"'s radar chart"), color = c("blue","red"))
         legend(
           x = "bottom", legend = c("Average",team_name), horiz = TRUE,
           bty = "n", pch = 20 , col = c("blue", "red"), text.col = "black",
@@ -867,7 +867,129 @@ team_plotter_defense <- function(mode, team_data_mode, team_name){
   }
 }
 
+team_ability_judge <- function(mode,team_name){
+  if (as.numeric(mode)==6){ #serie A
+    cmp <- serieA_radar[team_name,]-serieA_radar['Average',]
+    res <- list()
+    if(cmp[1,'Tackle won']>40){
+      res$defence <- 1
+    }else if(cmp[1,'Tackle won']<-40){
+      res$defence <- 3
+    }else{
+      res$defence <- 2
+    }
+    if(cmp[1,'Goals']>13){
+      res$score <- 1
+    }else if(cmp[1,'Goals']<-10){
+      res$score <- 3
+    }else{
+      res$score <- 2
+    }
+    if(cmp[1,'Passing rate']>2){
+      res$passing <- 1
+    }else if(cmp[1,'Passing rate']<-3){
+      res$passing <- 3
+    }else{
+      res$passing <- 2
+    }
+    if(cmp[1,'Key pass']>70){
+      res$attack <- 1
+    }else if(cmp[1,'Key pass']<-60){
+      res$attack <- 3
+    }else{
+      res$attack <- 2
+    }
+    if(cmp[1,'Possesion']>4){
+      res$possess <- 1
+    }else if(cmp[1,'Possesion']<-5){
+      res$possess <- 3
+    }else{
+      res$possess <- 2
+    }
+    if(cmp[1,'Saved expected goals']>2){
+      res$goalkeeper <- 1
+    }else if(cmp[1,'Saved expected goals']<-6){
+      res$goalkeeper <- 3
+    }else{
+      res$goalkeeper <- 2
+    }
+    return(res)
+  }else if (as.numeric(mode)==7){ #la liga
+    cmp <- laliga_radar[team_name,]-laliga_radar['Average',]
+    res <- list()
+    if(cmp[1,'Goal conceded']>8){
+      res$defence <- 1
+    }else if(cmp[1,'Goal conceded']<-12){
+      res$defence <- 3
+    }else{
+      res$defence <- 2
+    }
+    if(cmp[1,'Goal scored']>15){
+      res$score <- 1
+    }else if(cmp[1,'Goal scored']<-7){
+      res$score <- 3
+    }else{
+      res$score <- 2
+    }
+    if(cmp[1,'pass rate']>3){
+      res$passing <- 1
+    }else if(cmp[1,'pass rate']<-3){
+      res$passing <- 3
+    }else{
+      res$passing <- 2
+    }
+    if(cmp[1,'expeced assists 90min']>0.25){
+      res$attack <- 1
+    }else if(cmp[1,'expeced assists 90min']<-0.12){
+      res$attack <- 3
+    }else{
+      res$attack <- 2
+    }
+    if(cmp[1,'possession rate']>6){
+      res$possess <- 1
+    }else if(cmp[1,'possession rate']<-4.5){
+      res$possess <- 3
+    }else{
+      res$possess <- 2
+    }
+    if(cmp[1,'save rate']>3){
+      res$goalkeeper <- 1
+    }else if(cmp[1,'save rate']<-4){
+      res$goalkeeper <- 3
+    }else{
+      res$goalkeeper <- 2
+    }
+    return(res)
+  }
+}
 
+## Team characteristic summary
+team_plotter_summary <- function(mode,team_name){
+  res <- team_ability_judge(mode,team_name)
+  ggplot() +
+    annotate("text", x = -1, y = 3, size = 6, vjust = "inward", hjust = "inward",
+             label = score_summary[res$score],fontface='bold') + 
+    annotate("text", x = -1, y = 2.5, size = 6, vjust = "inward", hjust = "inward",
+             label = attack_summary[res$attack],fontface='bold') +
+    annotate("text", x = -1, y = 2, size = 6, vjust = "inward", hjust = "inward",
+             label = passing_summary[res$passing],fontface='bold') +
+    annotate("text", x = -1, y = 1.5, size = 6, vjust = "inward", hjust = "inward",
+             label = possess_summary[res$possess],fontface='bold') +
+    annotate("text", x = -1, y = 1, size = 6, vjust = "inward", hjust = "inward",
+             label = defence_summary[res$defence],fontface='bold') +
+    annotate("text", x = -1, y = 0.5, size = 6, vjust = "inward", hjust = "inward",
+             label = goalkeeper_summary[res$goalkeeper],fontface='bold') +
+    theme_void()
+}
+
+## Team potential signing
+team_plotter_signing <- function(mode,team_name){
+  if (as.numeric(mode)==6){ #serie A
+    
+  }else if (as.numeric(mode)==7){ #la liga
+    
+  }
+}
 
 s_team_input <- function(num){
   cho <- serieA_general[,1]
@@ -939,7 +1061,7 @@ s_multi_input <- function(num){
     label = 'choose players',
     choices = cho,
     multiple = TRUE,
-    options =  list("max-options" = 2),
+    options =  list("max-options" = 2,`live-search`=TRUE),
     selected = list(cho[1],cho[2])
   )
 }

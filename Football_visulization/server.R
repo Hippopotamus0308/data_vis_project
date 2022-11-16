@@ -59,12 +59,12 @@ shinyServer(function(input, output) {
       }else if(m%in%c(8,9)){
         p(h4("-----------------"),h4(main_description[as.numeric(input$mode)-7]),h4("-----------------"))
       }else if(m%in%c(6,7)){
-        p(h4("-----------------"),h4(main_description[0]),h4("-----------------"))
+        p(h4("----------------------------------"))
       }
     })
     
     output$main_searcher <- renderUI({
-      if (as.numeric(input$type)!=1&as.numeric((input$type)!=4)){
+      if (as.numeric(input$type)==2){
         if(!(as.numeric(input$type)==2&as.numeric(input$team_data_mode==1))){
           s_team_input(as.numeric(input$mode)) 
         }
@@ -76,6 +76,8 @@ shinyServer(function(input, output) {
         }
       }else if(as.numeric(input$type)==4){
         h4(main_summary[as.numeric(input$mode)-7])
+      }else if (as.numeric(input$type)==3){
+        s_team_input(as.numeric(input$mode)) 
       }
     })
     
@@ -89,6 +91,8 @@ shinyServer(function(input, output) {
         }
       }else if (as.numeric(input$type)==2){
         team_plotter_radar(input$mode, input$team_data_mode, input$team_name)
+      }else if (as.numeric(input$type)==3){
+        team_plotter_radar(input$mode, 2, input$team_name)
       }
     })
     
@@ -101,6 +105,8 @@ shinyServer(function(input, output) {
         }
       }else if (as.numeric(input$type)==2){
         team_plotter_attack(input$mode, input$team_data_mode, input$team_name)
+      }else if (as.numeric(input$type)==3){
+        team_plotter_summary(input$mode, input$team_name)
       }
     })
     
