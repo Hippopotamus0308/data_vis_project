@@ -1,8 +1,0 @@
----
-title: DATA5002 Assignment 2
-author: Ruiyi Yang Z5442708
-output:
-  html_notebook: default
----
-
-
