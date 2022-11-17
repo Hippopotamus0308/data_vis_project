@@ -9,16 +9,28 @@ main_plot_header_set <- c("Player statistics in UCL","Player statistics in EPL",
 main_description <- c("This project try to visulize players performance in UCL last season, as well as La Liga & Serie A's team statistics. Apart from visulization, this project also offers some signing advices towards La Liga & Serie A teams.",
                       "I collected season 2021-2022's UCL player data, and 2021-2022's La Liga & Serie A's team data. Data includes player/team's attacking, defense, possesion and passing statistics.")
 
-main_summary <- c("All code and data can be found on github: ",
+main_summary <- c("All code and data can be found on github: https://github.com/Hippopotamus0308/data_vis_project",
                   "Raw data is on kaggle, data is cleaned to be used in this project.")
 
-score_summary <- c("Very impressive score ability.","Average score ability.","Poor score ability.")
-attack_summary <- c("Created large amount of chances.","Be able to create adequate chances","Poor creativity.")
-passing_summary <- c("High passing success rate.","Normal passing success rate.","Make too many mistakes when passing.")
-possess_summary <- c("Love to control ball.","No possession tendency.","Prefer yield ball to opponents.")
-defence_summary <- c("High quality defense.","Normal standard defense.","Poor defense.")
-goalkeeper_summary <- c("Advanced goalkeeper.","Normal goalkeeper.","Poor goalkeeper")
+score_summary <- c("very impressive score ability &","average score ability &","poor score ability &")
+attack_summary <- c("created large amount of chances","be able to create adequate chances","poor creativity")
+passing_summary <- c("high passing success rate &","normal passing success rate &","too many mistakes when passing &")
+possess_summary <- c("love to control ball","no possession tendency","prefer yield ball to opponents")
+defence_summary <- c("high quality defense","normal standard defense","poor defense")
+goalkeeper_summary <- c("advanced goalkeeper","normal goalkeeper","poor goalkeeper")
 
+score_recommend <- list(c('Jesus','Núñez','Haller'),
+                        c('Malen','André Silva','Adeyemi'),
+                        c('Yaremchuk','David','Berghuis'))
+midfielder_recommend <- list(c('J. Timber','Maycon','Paredes'),
+                             c('Álvarez','Weigl','Gravenberch'),
+                             c('Barrios','Lauper','Shaparenko'))
+defence_recommand <- list(c('Otamendi','Fernando Costanza','Mazraoui'),
+                          c('Gilberto','Fonte','Luís Neto'),
+                          c('Rakitskyy','Dodô','Matheus Reis'))
+goalkeeper_recommand <- list(c('Athanasiadis','Ulreich','Casteels'),
+                             c('Dahlin','Pervan','Vlachodimos'),
+                             c('Boyko','Trubin','Mignolet'))
 
 ucl_attacking <- read.csv('./data/UCL/attacking.csv')
 ucl_attempts <- read.csv('./data/UCL/attempts.csv')

@@ -21,7 +21,7 @@ shinyServer(function(input, output) {
     output$detail <- renderUI({
       if (input$type == 1) {
         awesomeRadio("mode",h3("Select the statistics"),
-                     choices = list("Player statistics in UCL"=1,"Player statistics in EPL"=2,"Statistics comparation"=3),
+                     choices = list("Player statistics in UCL"=1,"Statistics comparation"=3),
                      selected = 1)
       }else if (input$type == 2){
         awesomeRadio("mode",h3("Select the statistics"),
@@ -106,7 +106,7 @@ shinyServer(function(input, output) {
       }else if (as.numeric(input$type)==2){
         team_plotter_attack(input$mode, input$team_data_mode, input$team_name)
       }else if (as.numeric(input$type)==3){
-        team_plotter_summary(input$mode, input$team_name)
+        team_plotter_signing1(input$mode, input$team_name)
       }
     })
     
@@ -119,6 +119,8 @@ shinyServer(function(input, output) {
         }
       }else if (as.numeric(input$type)==2){
         team_plotter_pass(input$mode, input$team_data_mode, input$team_name)
+      }else if (as.numeric(input$type)==3){
+        team_plotter_signing2(input$mode, input$team_name)
       }
     })
     
@@ -131,6 +133,8 @@ shinyServer(function(input, output) {
         }
       }else if (as.numeric(input$type)==2){
         team_plotter_possess(input$mode, input$team_data_mode, input$team_name)
+      }else if (as.numeric(input$type)==3){
+        team_plotter_signing3(input$mode, input$team_name)
       }
     })
     
@@ -143,6 +147,8 @@ shinyServer(function(input, output) {
         }
       }else if (as.numeric(input$type)==2){
         team_plotter_defense(input$mode, input$team_data_mode, input$team_name)
+      }else if (as.numeric(input$type)==3){
+        team_plotter_signing4(input$mode, input$team_name)
       }
     })
     

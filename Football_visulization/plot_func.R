@@ -3,6 +3,9 @@ source('data.R')
 library(fmsb)
 library(ggrepel)
 library(shinycssloaders)
+library(tidyverse)
+library(networkD3)
+library(visNetwork)
 
 # radar chart for a certain player / average data
 player_plotter_radar <- function(type, player_name){
@@ -206,8 +209,8 @@ player_plotter_main_res <- function(type,pname){
       ggtitle("Forward's scoring statistics",)+geom_point()+
       scale_x_continuous("mean shooting(/90min)",limits = c(0,6.9))+scale_y_continuous("score(/90min)",limits = c(0,1.5))+
       geom_hline(yintercept = 0.34,col = "blue") + geom_vline(xintercept = 2.38, col = "blue") +
-      theme(plot.title = element_text(size = 15, face = "bold"),
-            axis.title = element_text(size = 15, face = "bold"))+
+      theme(plot.title = element_text(size = 12, face = "bold"),
+            axis.title = element_text(size = 12, face = "bold"))+
       geom_label(data=ucl_forward_final %>% filter(player_name==pname),
                  nudge_x = 0.1, nudge_y = 0.1,
                  aes(label=player_name))+
@@ -218,8 +221,8 @@ player_plotter_main_res <- function(type,pname){
       ggtitle("Midfielder's key statistics",)+geom_point()+
       scale_x_continuous("mean pass(/90min)",limits = c(10,100))+scale_y_continuous("passing accuracy(%)",limits = c(30,100))+
       geom_hline(yintercept = 82.1,col = "blue") + geom_vline(xintercept = 45.8, col = "blue") +
-      theme(plot.title = element_text(size = 15, face = "bold"),
-            axis.title = element_text(size = 15, face = "bold"))+
+      theme(plot.title = element_text(size = 12, face = "bold"),
+            axis.title = element_text(size = 12, face = "bold"))+
       geom_label(data=ucl_midfielder_final %>% filter(player_name==pname),
                  nudge_x = 1, nudge_y = 1,
                  aes(label=player_name))+
@@ -230,8 +233,8 @@ player_plotter_main_res <- function(type,pname){
       ggtitle("Defender's key statistics",)+geom_point()+
       scale_x_continuous("tackle win rate(%)",limits = c(0,100))+scale_y_continuous("average tackles(/90min)",limits = c(0,5))+
       geom_hline(yintercept = 1.18,col = "blue") + geom_vline(xintercept = 45.57, col = "blue") +
-      theme(plot.title = element_text(size = 15, face = "bold"),
-            axis.title = element_text(size = 15, face = "bold"))+
+      theme(plot.title = element_text(size = 12, face = "bold"),
+            axis.title = element_text(size = 12, face = "bold"))+
       geom_label(data=ucl_defender_final %>% filter(player_name==pname),
                  nudge_x = 2, nudge_y = 0.2,
                  aes(label=player_name))+
@@ -242,8 +245,8 @@ player_plotter_main_res <- function(type,pname){
       ggtitle("Goalkeeper's key statistics",)+geom_point()+
       scale_x_continuous("save rate(%)",limits = c(0.35,1.2))+scale_y_continuous("mean save(/90min)",limits = c(0,7))+
       geom_hline(yintercept = 3.125,col = "blue") + geom_vline(xintercept = 0.661, col = "blue") +
-      theme(plot.title = element_text(size = 15, face = "bold"),
-            axis.title = element_text(size = 15, face = "bold"))+
+      theme(plot.title = element_text(size = 12, face = "bold"),
+            axis.title = element_text(size = 12, face = "bold"))+
       geom_label(data=ucl_goalkeeping_key_stat %>% filter(player_name==pname),
                  nudge_x = 0.05, nudge_y = 0.5,
                  aes(label=player_name))+
@@ -259,25 +262,25 @@ multiplayer_plotter_main_res <- function(type,players){
         ggtitle("Forward's scoring statistics",)+geom_point()+
         scale_x_continuous("mean shooting(/90min)",limits = c(0,6.9))+scale_y_continuous("score(/90min)",limits = c(0,1.5))+
         geom_hline(yintercept = 0.34,col = "blue") + geom_vline(xintercept = 2.38, col = "blue") +
-        theme(plot.title = element_text(size = 15, face = "bold"),axis.title = element_text(size = 15, face = "bold"))
+        theme(plot.title = element_text(size = 12, face = "bold"),axis.title = element_text(size = 12, face = "bold"))
     }else if(type==2){
       ucl_midfielder_final %>% ggplot(aes(y=pass_accuracy,x=pass_attempted/minutes_played*90,label=player_name))+
         ggtitle("Midfielder's key statistics",)+geom_point()+
         scale_x_continuous("mean pass(/90min)",limits = c(10,100))+scale_y_continuous("passing accuracy(%)",limits = c(30,100))+
         geom_hline(yintercept = 82.1,col = "blue") + geom_vline(xintercept = 45.8, col = "blue") +
-        theme(plot.title = element_text(size = 15, face = "bold"),axis.title = element_text(size = 15, face = "bold"))
+        theme(plot.title = element_text(size = 12, face = "bold"),axis.title = element_text(size = 12, face = "bold"))
     }else if(type==3){
       ucl_defender_final %>% ggplot(aes(y=tackles/minutes_played*90,x=(t_won+0.001)/(tackles+0.01)*100,label=player_name))+
         ggtitle("Defender's key statistics",)+geom_point()+
         scale_x_continuous("tackle win rate(%)",limits = c(0,100))+scale_y_continuous("average tackles(/90min)",limits = c(0,5))+
         geom_hline(yintercept = 1.18,col = "blue") + geom_vline(xintercept = 45.57, col = "blue") +
-        theme(plot.title = element_text(size = 15, face = "bold"),axis.title = element_text(size = 15, face = "bold"))
+        theme(plot.title = element_text(size = 12, face = "bold"),axis.title = element_text(size = 12, face = "bold"))
     }else if(type==4){
       ucl_goalkeeping_key_stat %>% ggplot(aes(x=save_rate,y=mean_save,label=player_name))+
         ggtitle("Goalkeeper's key statistics",)+geom_point()+
         scale_x_continuous("save rate(%)",limits = c(0.35,1.2))+scale_y_continuous("mean save(/90min)",limits = c(0,7))+
         geom_hline(yintercept = 3.125,col = "blue") + geom_vline(xintercept = 0.661, col = "blue") +
-        theme(plot.title = element_text(size = 15, face = "bold"),axis.title = element_text(size = 15, face = "bold"))
+        theme(plot.title = element_text(size = 12, face = "bold"),axis.title = element_text(size = 12, face = "bold"))
     }
   }else if (length(players)==1){
     player_plotter_main_res(type,players[[1]])
@@ -287,8 +290,8 @@ multiplayer_plotter_main_res <- function(type,players){
         ggtitle("Forward's scoring statistics",)+geom_point()+
         scale_x_continuous("mean shooting(/90min)",limits = c(0,6.9))+scale_y_continuous("score(/90min)",limits = c(0,1.5))+
         geom_hline(yintercept = 0.34,col = "blue") + geom_vline(xintercept = 2.38, col = "blue") +
-        theme(plot.title = element_text(size = 15, face = "bold"),
-              axis.title = element_text(size = 15, face = "bold"))+
+        theme(plot.title = element_text(size = 12, face = "bold"),
+              axis.title = element_text(size = 12, face = "bold"))+
         geom_label(data=ucl_forward_final %>% filter(player_name %in% c(players[[1]], players[[2]])),
                    nudge_x = 0.1, nudge_y = 0.1,
                    aes(label=player_name))+
@@ -299,8 +302,8 @@ multiplayer_plotter_main_res <- function(type,players){
         ggtitle("Midfielder's key statistics",)+geom_point()+
         scale_x_continuous("mean pass(/90min)",limits = c(10,100))+scale_y_continuous("passing accuracy(%)",limits = c(30,100))+
         geom_hline(yintercept = 82.1,col = "blue") + geom_vline(xintercept = 45.8, col = "blue") +
-        theme(plot.title = element_text(size = 15, face = "bold"),
-              axis.title = element_text(size = 15, face = "bold"))+
+        theme(plot.title = element_text(size = 12, face = "bold"),
+              axis.title = element_text(size = 12, face = "bold"))+
         geom_label(data=ucl_midfielder_final %>% filter(player_name %in% c(players[[1]], players[[2]])),
                    nudge_x = 1, nudge_y = 1,
                    aes(label=player_name))+
@@ -311,8 +314,8 @@ multiplayer_plotter_main_res <- function(type,players){
         ggtitle("Defender's key statistics",)+geom_point()+
         scale_x_continuous("tackle win rate(%)",limits = c(0,100))+scale_y_continuous("average tackles(/90min)",limits = c(0,5))+
         geom_hline(yintercept = 1.18,col = "blue") + geom_vline(xintercept = 45.57, col = "blue") +
-        theme(plot.title = element_text(size = 15, face = "bold"),
-              axis.title = element_text(size = 15, face = "bold"))+
+        theme(plot.title = element_text(size = 12, face = "bold"),
+              axis.title = element_text(size = 12, face = "bold"))+
         geom_label(data=ucl_defender_final %>% filter(player_name %in% c(players[[1]], players[[2]])),
                    nudge_x = 2, nudge_y = 0.2,
                    aes(label=player_name))+
@@ -323,8 +326,8 @@ multiplayer_plotter_main_res <- function(type,players){
         ggtitle("Goalkeeper's key statistics",)+geom_point()+
         scale_x_continuous("save rate(%)",limits = c(0.35,1.2))+scale_y_continuous("mean save(/90min)",limits = c(0,7))+
         geom_hline(yintercept = 3.125,col = "blue") + geom_vline(xintercept = 0.661, col = "blue") +
-        theme(plot.title = element_text(size = 15, face = "bold"),
-              axis.title = element_text(size = 15, face = "bold"))+
+        theme(plot.title = element_text(size = 12, face = "bold"),
+              axis.title = element_text(size = 12, face = "bold"))+
         geom_label(data=ucl_goalkeeping_key_stat %>% filter(player_name %in% c(players[[1]], players[[2]])),
                    nudge_x = 0.05, nudge_y = 0.5,
                    aes(label=player_name))+
@@ -343,8 +346,8 @@ player_plotter_addition <- function(type,pname){
       ggtitle("Forward's passing statistics",)+geom_point()+
       scale_x_continuous("mean pass(/90min)",limits = c(5,80))+scale_y_continuous("pass accuracy(%)",limits = c(35,95))+
       geom_hline(yintercept = 75.2,col = "blue") + geom_vline(xintercept = 30, col = "blue") +
-      theme(plot.title = element_text(size = 15, face = "bold"),
-            axis.title = element_text(size = 15, face = "bold"))+
+      theme(plot.title = element_text(size = 12, face = "bold"),
+            axis.title = element_text(size = 12, face = "bold"))+
       geom_label(data=ucl_forward_final %>% filter(player_name==pname),
                  nudge_x = 1, nudge_y = 1,
                  aes(label=player_name))+
@@ -355,8 +358,8 @@ player_plotter_addition <- function(type,pname){
       ggtitle("Midfielder's distance covering & defence",)+geom_point()+
       scale_x_continuous("distance covered(km/90min)",limits = c(7.5,14))+scale_y_continuous("balls recovered(/90min)",limits = c(0,9.5))+
       geom_hline(yintercept = 3.87,col = "blue") + geom_vline(xintercept = 11.5, col = "blue") +
-      theme(plot.title = element_text(size = 15, face = "bold"),
-            axis.title = element_text(size = 15, face = "bold"))+
+      theme(plot.title = element_text(size = 12, face = "bold"),
+            axis.title = element_text(size = 12, face = "bold"))+
       geom_label(data=ucl_midfielder_final %>% filter(player_name==pname),
                  nudge_x = 0.2, nudge_y = 0.2,
                  aes(label=player_name))+
@@ -368,8 +371,8 @@ player_plotter_addition <- function(type,pname){
       scale_x_continuous("win balls(/90min)",limits = c(0.5,11.5))+
       scale_y_continuous("attempts to clear the ball(/90min)",limits = c(0,10))+
       geom_hline(yintercept = 2.83,col = "blue") + geom_vline(xintercept = 5.41, col = "blue") +
-      theme(plot.title = element_text(size = 15, face = "bold"),
-            axis.title = element_text(size = 15, face = "bold"))+
+      theme(plot.title = element_text(size = 12, face = "bold"),
+            axis.title = element_text(size = 12, face = "bold"))+
       geom_label(data=ucl_defender_final %>% filter(player_name==pname),
                  nudge_x = 0.5, nudge_y = 0.5,
                  aes(label=player_name))+
@@ -380,8 +383,8 @@ player_plotter_addition <- function(type,pname){
       ggtitle("Goalkeeper's passing statistics",)+geom_point()+
       scale_x_continuous("mean pass(/90min)",limits = c(10,50))+scale_y_continuous("pass accuracy(%)",limits = c(45,100))+
       geom_hline(yintercept = 77.1,col = "blue") + geom_vline(xintercept = 31.05, col = "blue") +
-      theme(plot.title = element_text(size = 15, face = "bold"),
-            axis.title = element_text(size = 15, face = "bold"))+
+      theme(plot.title = element_text(size = 12, face = "bold"),
+            axis.title = element_text(size = 12, face = "bold"))+
       geom_label(data=ucl_goalkeeping_final %>% filter(player_name==pname),
                  nudge_x = 1, nudge_y = 3,
                  aes(label=player_name))+
@@ -397,30 +400,30 @@ multiplayer_plotter_addition <- function(type,players){
         ggtitle("Forward's passing statistics",)+geom_point()+
         scale_x_continuous("mean pass(/90min)",limits = c(5,80))+scale_y_continuous("pass accuracy(%)",limits = c(35,95))+
         geom_hline(yintercept = 75.2,col = "blue") + geom_vline(xintercept = 30, col = "blue") +
-        theme(plot.title = element_text(size = 15, face = "bold"),
-              axis.title = element_text(size = 15, face = "bold"))
+        theme(plot.title = element_text(size = 12, face = "bold"),
+              axis.title = element_text(size = 12, face = "bold"))
     }else if(type==2){
       ucl_midfielder_final %>% ggplot(aes(y=balls_recoverd/minutes_played*90,x=distance_covered/minutes_played*90,label=player_name))+
         ggtitle("Midfielder's distance covering & defence",)+geom_point()+
         scale_x_continuous("distance covered(km/90min)",limits = c(7.5,14))+scale_y_continuous("balls recovered(/90min)",limits = c(0,9.5))+
         geom_hline(yintercept = 3.87,col = "blue") + geom_vline(xintercept = 11.5, col = "blue") +
-        theme(plot.title = element_text(size = 15, face = "bold"),
-              axis.title = element_text(size = 15, face = "bold"))
+        theme(plot.title = element_text(size = 12, face = "bold"),
+              axis.title = element_text(size = 12, face = "bold"))
     }else if(type==3){
       ucl_defender_final %>% ggplot(aes(x=balls_recoverd/minutes_played*90,y=clearance_attempted/minutes_played*90))+
         ggtitle("Defender's recover & clearance",)+geom_point()+
         scale_x_continuous("win balls(/90min)",limits = c(0.5,11.5))+
         scale_y_continuous("attempts to clear the ball(/90min)",limits = c(0,10))+
         geom_hline(yintercept = 2.83,col = "blue") + geom_vline(xintercept = 5.41, col = "blue") +
-        theme(plot.title = element_text(size = 15, face = "bold"),
-              axis.title = element_text(size = 15, face = "bold"))
+        theme(plot.title = element_text(size = 12, face = "bold"),
+              axis.title = element_text(size = 12, face = "bold"))
     }else if(type==4){
       ucl_goalkeeping_final %>% ggplot(aes(x=mean_pass,y=pass_accuracy))+
         ggtitle("Goalkeeper's passing statistics",)+geom_point()+
         scale_x_continuous("mean pass(/90min)",limits = c(10,50))+scale_y_continuous("pass accuracy(%)",limits = c(45,100))+
         geom_hline(yintercept = 77.1,col = "blue") + geom_vline(xintercept = 31.05, col = "blue") +
-        theme(plot.title = element_text(size = 15, face = "bold"),
-              axis.title = element_text(size = 15, face = "bold"))
+        theme(plot.title = element_text(size = 12, face = "bold"),
+              axis.title = element_text(size = 12, face = "bold"))
     }
   }else if (length(players)==1){
     player_plotter_addition(type,players[[1]])
@@ -430,8 +433,8 @@ multiplayer_plotter_addition <- function(type,players){
         ggtitle("Forward's passing statistics",)+geom_point()+
         scale_x_continuous("mean pass(/90min)",limits = c(5,80))+scale_y_continuous("pass accuracy(%)",limits = c(35,95))+
         geom_hline(yintercept = 75.2,col = "blue") + geom_vline(xintercept = 30, col = "blue") +
-        theme(plot.title = element_text(size = 15, face = "bold"),
-              axis.title = element_text(size = 15, face = "bold"))+
+        theme(plot.title = element_text(size = 12, face = "bold"),
+              axis.title = element_text(size = 12, face = "bold"))+
         geom_label(data=ucl_forward_final %>% filter(player_name %in% c(players[[1]],players[[2]])),
                    nudge_x = 1, nudge_y = 1,
                    aes(label=player_name))+
@@ -442,8 +445,8 @@ multiplayer_plotter_addition <- function(type,players){
         ggtitle("Midfielder's distance covering & defence",)+geom_point()+
         scale_x_continuous("distance covered(km/90min)",limits = c(7.5,14))+scale_y_continuous("balls recovered(/90min)",limits = c(0,9.5))+
         geom_hline(yintercept = 3.87,col = "blue") + geom_vline(xintercept = 11.5, col = "blue") +
-        theme(plot.title = element_text(size = 15, face = "bold"),
-              axis.title = element_text(size = 15, face = "bold"))+
+        theme(plot.title = element_text(size = 12, face = "bold"),
+              axis.title = element_text(size = 12, face = "bold"))+
         geom_label(data=ucl_midfielder_final %>% filter(player_name %in% c(players[[1]],players[[2]])),
                    nudge_x = 0.2, nudge_y = 0.2,
                    aes(label=player_name))+
@@ -455,8 +458,8 @@ multiplayer_plotter_addition <- function(type,players){
         scale_x_continuous("win balls(/90min)",limits = c(0.5,11.5))+
         scale_y_continuous("attempts to clear the ball(/90min)",limits = c(0,10))+
         geom_hline(yintercept = 2.83,col = "blue") + geom_vline(xintercept = 5.41, col = "blue") +
-        theme(plot.title = element_text(size = 15, face = "bold"),
-              axis.title = element_text(size = 15, face = "bold"))+
+        theme(plot.title = element_text(size = 12, face = "bold"),
+              axis.title = element_text(size = 12, face = "bold"))+
         geom_label(data=ucl_defender_final %>% filter(player_name %in% c(players[[1]],players[[2]])),
                    nudge_x = 0.5, nudge_y = 0.5,
                    aes(label=player_name))+
@@ -467,8 +470,8 @@ multiplayer_plotter_addition <- function(type,players){
         ggtitle("Goalkeeper's passing statistics",)+geom_point()+
         scale_x_continuous("mean pass(/90min)",limits = c(10,50))+scale_y_continuous("pass accuracy(%)",limits = c(45,100))+
         geom_hline(yintercept = 77.1,col = "blue") + geom_vline(xintercept = 31.05, col = "blue") +
-        theme(plot.title = element_text(size = 15, face = "bold"),
-              axis.title = element_text(size = 15, face = "bold"))+
+        theme(plot.title = element_text(size = 12, face = "bold"),
+              axis.title = element_text(size = 12, face = "bold"))+
         geom_label(data=ucl_goalkeeping_final %>% filter(player_name %in% c(players[[1]],players[[2]])),
                    nudge_x = 1, nudge_y = 3,
                    aes(label=player_name))+
@@ -486,8 +489,8 @@ player_plotter_addition2 <- function(type,pname){
       ggtitle("Forward's crossing statistics",)+geom_point()+
       scale_x_continuous("mean cross(/90min)",limits = c(0,7.5))+scale_y_continuous("create goals(/90min)",limits = c(0,2.3))+
       geom_hline(yintercept = 0.75,col = "blue") + geom_vline(xintercept = 1.54, col = "blue") +
-      theme(plot.title = element_text(size = 15, face = "bold"),
-            axis.title = element_text(size = 15, face = "bold"))+
+      theme(plot.title = element_text(size = 12, face = "bold"),
+            axis.title = element_text(size = 12, face = "bold"))+
       geom_label(data=ucl_forward_final %>% filter(player_name==pname),
                  nudge_x = 0.2, nudge_y = 0.2,
                  aes(label=player_name))+
@@ -498,8 +501,8 @@ player_plotter_addition2 <- function(type,pname){
       ggtitle("Midfielder's distance covering & attack",)+geom_point()+
       scale_x_continuous("distance covered(km/90min)",limits = c(7.5,14))+scale_y_continuous("create goals(/90min)",limits = c(0,1.7))+
       geom_hline(yintercept = 0.25,col = "blue") + geom_vline(xintercept = 11.5, col = "blue") +
-      theme(plot.title = element_text(size = 15, face = "bold"),
-            axis.title = element_text(size = 15, face = "bold"))+
+      theme(plot.title = element_text(size = 12, face = "bold"),
+            axis.title = element_text(size = 12, face = "bold"))+
       geom_label(data=ucl_midfielder_final %>% filter(player_name==pname),
                  nudge_x = 0.2, nudge_y = 0.1,
                  aes(label=player_name))+
@@ -510,8 +513,8 @@ player_plotter_addition2 <- function(type,pname){
       ggtitle("Defender's passing statistics",)+geom_point()+
       scale_x_continuous("mean pass(/90min)",limits = c(0,110))+scale_y_continuous("pass accuracy(%)",limits = c(40,100))+
       geom_hline(yintercept = 83.81,col = "blue") + geom_vline(xintercept = 50.27, col = "blue") +
-      theme(plot.title = element_text(size = 15, face = "bold"),
-            axis.title = element_text(size = 15, face = "bold"))+
+      theme(plot.title = element_text(size = 12, face = "bold"),
+            axis.title = element_text(size = 12, face = "bold"))+
       geom_label(data=ucl_defender_final %>% filter(player_name==pname),
                  nudge_x = 1, nudge_y = 3,
                  aes(label=player_name))+
@@ -522,8 +525,8 @@ player_plotter_addition2 <- function(type,pname){
       ggtitle("Goalkeeper's punches tendency",)+
       geom_density(fill='blue',alpha=0.5)+
       scale_x_continuous("punches made",limits = c(-3,15))+scale_y_continuous("propotion(%)",limits = c(0,0.25))+
-      theme(plot.title = element_text(size = 15, face = "bold"),
-            axis.title = element_text(size = 15, face = "bold"))+
+      theme(plot.title = element_text(size = 12, face = "bold"),
+            axis.title = element_text(size = 12, face = "bold"))+
       geom_vline(xintercept = (ucl_goalkeeping_final %>% filter(player_name==pname))[,9],col = "red") +
       geom_label(data=ucl_goalkeeping_final %>% filter(player_name==pname),
                  aes(y=0.25,label=player_name))
@@ -537,29 +540,29 @@ multiplayer_plotter_addition2 <- function(type,players){
         ggtitle("Forward's crossing statistics",)+geom_point()+
         scale_x_continuous("mean cross(/90min)",limits = c(0,7.5))+scale_y_continuous("create goals(/90min)",limits = c(0,2.3))+
         geom_hline(yintercept = 0.75,col = "blue") + geom_vline(xintercept = 1.54, col = "blue") +
-        theme(plot.title = element_text(size = 15, face = "bold"),
-              axis.title = element_text(size = 15, face = "bold"))
+        theme(plot.title = element_text(size = 12, face = "bold"),
+              axis.title = element_text(size = 12, face = "bold"))
     }else if(type==2){
       ucl_midfielder_final %>% ggplot(aes(y=(goals+assists)/minutes_played*90,x=distance_covered/minutes_played*90,label=player_name))+
         ggtitle("Midfielder's distance covering & attack",)+geom_point()+
         scale_x_continuous("distance covered(km/90min)",limits = c(7.5,14))+scale_y_continuous("create goals(/90min)",limits = c(0,1.7))+
         geom_hline(yintercept = 0.25,col = "blue") + geom_vline(xintercept = 11.5, col = "blue") +
-        theme(plot.title = element_text(size = 15, face = "bold"),
-              axis.title = element_text(size = 15, face = "bold"))
+        theme(plot.title = element_text(size = 12, face = "bold"),
+              axis.title = element_text(size = 12, face = "bold"))
     }else if(type==3){
       ucl_defender_final %>% ggplot(aes(x=pass_attempted/minutes_played*90,y=pass_accuracy))+
         ggtitle("Defender's passing statistics",)+geom_point()+
         scale_x_continuous("mean pass(/90min)",limits = c(0,110))+scale_y_continuous("pass accuracy(%)",limits = c(40,100))+
         geom_hline(yintercept = 83.81,col = "blue") + geom_vline(xintercept = 50.27, col = "blue") +
-        theme(plot.title = element_text(size = 15, face = "bold"),
-              axis.title = element_text(size = 15, face = "bold"))
+        theme(plot.title = element_text(size = 12, face = "bold"),
+              axis.title = element_text(size = 12, face = "bold"))
     }else if(type==4){
       ucl_goalkeeping_final %>% ggplot(aes(x=punches.made))+
         ggtitle("Goalkeeper's punches tendency",)+
         geom_density(fill='blue',alpha=0.5)+
         scale_x_continuous("punches made",limits = c(-3,15))+scale_y_continuous("propotion(%)",limits = c(0,0.25))+
-        theme(plot.title = element_text(size = 15, face = "bold"),
-              axis.title = element_text(size = 15, face = "bold"))
+        theme(plot.title = element_text(size = 12, face = "bold"),
+              axis.title = element_text(size = 12, face = "bold"))
     }
   }else if (length(players)==1){
     player_plotter_addition2(type,players[[1]])
@@ -569,8 +572,8 @@ multiplayer_plotter_addition2 <- function(type,players){
         ggtitle("Forward's crossing statistics",)+geom_point()+
         scale_x_continuous("mean cross(/90min)",limits = c(0,7.5))+scale_y_continuous("create goals(/90min)",limits = c(0,2.3))+
         geom_hline(yintercept = 0.75,col = "blue") + geom_vline(xintercept = 1.54, col = "blue") +
-        theme(plot.title = element_text(size = 15, face = "bold"),
-              axis.title = element_text(size = 15, face = "bold"))+
+        theme(plot.title = element_text(size = 12, face = "bold"),
+              axis.title = element_text(size = 12, face = "bold"))+
         geom_label(data=ucl_forward_final %>% filter(player_name %in% c(players[[1]],players[[2]])),
                    nudge_x = 0.2, nudge_y = 0.2,
                    aes(label=player_name))+
@@ -581,8 +584,8 @@ multiplayer_plotter_addition2 <- function(type,players){
         ggtitle("Midfielder's distance covering & attack",)+geom_point()+
         scale_x_continuous("distance covered(km/90min)",limits = c(7.5,14))+scale_y_continuous("create goals(/90min)",limits = c(0,1.7))+
         geom_hline(yintercept = 0.25,col = "blue") + geom_vline(xintercept = 11.5, col = "blue") +
-        theme(plot.title = element_text(size = 15, face = "bold"),
-              axis.title = element_text(size = 15, face = "bold"))+
+        theme(plot.title = element_text(size = 12, face = "bold"),
+              axis.title = element_text(size = 12, face = "bold"))+
         geom_label(data=ucl_midfielder_final %>% filter(player_name %in% c(players[[1]],players[[2]])),
                    nudge_x = 0.2, nudge_y = 0.1,
                    aes(label=player_name))+
@@ -593,8 +596,8 @@ multiplayer_plotter_addition2 <- function(type,players){
         ggtitle("Defender's passing statistics",)+geom_point()+
         scale_x_continuous("mean pass(/90min)",limits = c(0,110))+scale_y_continuous("pass accuracy(%)",limits = c(40,100))+
         geom_hline(yintercept = 83.81,col = "blue") + geom_vline(xintercept = 50.27, col = "blue") +
-        theme(plot.title = element_text(size = 15, face = "bold"),
-              axis.title = element_text(size = 15, face = "bold"))+
+        theme(plot.title = element_text(size = 12, face = "bold"),
+              axis.title = element_text(size = 12, face = "bold"))+
         geom_label(data=ucl_defender_final %>% filter(player_name %in% c(players[[1]],players[[2]])),
                    nudge_x = 1, nudge_y = 3,
                    aes(label=player_name))+
@@ -605,8 +608,8 @@ multiplayer_plotter_addition2 <- function(type,players){
         ggtitle("Goalkeeper's punches tendency",)+
         geom_density(fill='blue',alpha=0.5)+
         scale_x_continuous("punches made",limits = c(-3,15))+scale_y_continuous("propotion(%)",limits = c(0,0.25))+
-        theme(plot.title = element_text(size = 15, face = "bold"),
-              axis.title = element_text(size = 15, face = "bold"))+
+        theme(plot.title = element_text(size = 12, face = "bold"),
+              axis.title = element_text(size = 12, face = "bold"))+
         geom_vline(xintercept = (ucl_goalkeeping_final %>% filter(player_name==players[[1]]))[,9],col = "red") +
         geom_vline(xintercept = (ucl_goalkeeping_final %>% filter(player_name==players[[2]]))[,9],col = "red") +
         geom_label_repel(data=ucl_goalkeeping_final %>% filter(player_name==players[[1]]),
@@ -634,8 +637,8 @@ player_plotter_discipline <- function(type,pname){
       ggtitle(paste(posi,"'s ","disciplinary data"))+geom_point()+
       scale_x_continuous("foulscommitted(/match)",limits = c(0,4))+scale_y_continuous("fouls suffered(/match)",limits = c(0,3.5))+
       geom_hline(yintercept = 0.7588,col = "blue") + geom_vline(xintercept = 0.8747, col = "blue") +
-      theme(plot.title = element_text(size = 15, face = "bold"),
-            axis.title = element_text(size = 15, face = "bold"))+
+      theme(plot.title = element_text(size = 12, face = "bold"),
+            axis.title = element_text(size = 12, face = "bold"))+
       geom_label(data=ucl_disciplinary %>% filter(player_name==pname),
                  nudge_x = 0.2, nudge_y = 0.2,
                  aes(label=player_name))+
@@ -646,8 +649,8 @@ player_plotter_discipline <- function(type,pname){
     ggplot(ept_data,aes(x,y))+ggtitle(paste(posi,"'s ","disciplinary data"))+
       scale_x_continuous("foulscommitted(/match)",limits = c(0,4))+scale_y_continuous("fouls suffered(/match)",limits = c(0,3.5))+
       geom_text(aes(label="These players had no foul-related data.",size=10))+
-      theme(plot.title = element_text(size = 15, face = "bold"),
-            axis.title = element_text(size = 15, face = "bold"),
+      theme(plot.title = element_text(size = 12, face = "bold"),
+            axis.title = element_text(size = 12, face = "bold"),
             legend.position = 'none')
   }
 }
@@ -668,8 +671,8 @@ multiplayer_plotter_discipline <- function(type, players){
     ggplot(ept_data,aes(x,y))+ggtitle(paste(posi,"'s ","disciplinary data"))+
       scale_x_continuous("foulscommitted(/match)",limits = c(0,4))+scale_y_continuous("fouls suffered(/match)",limits = c(0,3.5))+
       geom_text(aes(label="No foul-related data.",size=10))+
-      theme(plot.title = element_text(size = 15, face = "bold"),
-            axis.title = element_text(size = 15, face = "bold"),
+      theme(plot.title = element_text(size = 12, face = "bold"),
+            axis.title = element_text(size = 12, face = "bold"),
             legend.position = 'none')
   } else if (length(players)==1){
     player_plotter_addition2(type,players[[1]])
@@ -679,8 +682,8 @@ multiplayer_plotter_discipline <- function(type, players){
         ggtitle(paste(posi,"'s ","disciplinary data"))+geom_point()+
         scale_x_continuous("foulscommitted(/match)",limits = c(0,4))+scale_y_continuous("fouls suffered(/match)",limits = c(0,3.5))+
         geom_hline(yintercept = 0.7588,col = "blue") + geom_vline(xintercept = 0.8747, col = "blue") +
-        theme(plot.title = element_text(size = 15, face = "bold"),
-              axis.title = element_text(size = 15, face = "bold"))+
+        theme(plot.title = element_text(size = 12, face = "bold"),
+              axis.title = element_text(size = 12, face = "bold"))+
         geom_label(data=ucl_disciplinary %>% filter(player_name %in% c(players[[1]],players[[2]])),
                    nudge_x = 0.2, nudge_y = 0.2,
                    aes(label=player_name))+
@@ -691,8 +694,8 @@ multiplayer_plotter_discipline <- function(type, players){
       ggplot(ept_data,aes(x,y))+ggtitle(paste(posi,"'s ","disciplinary data"))+
         scale_x_continuous("foulscommitted(/match)",limits = c(0,4))+scale_y_continuous("fouls suffered(/match)",limits = c(0,3.5))+
         geom_text(aes(label="This player had no foul-related data.",size=10))+
-        theme(plot.title = element_text(size = 15, face = "bold"),
-              axis.title = element_text(size = 15, face = "bold"),
+        theme(plot.title = element_text(size = 12, face = "bold"),
+              axis.title = element_text(size = 12, face = "bold"),
               legend.position = 'none')
     }
   }
@@ -704,15 +707,15 @@ team_plotter_attack <- function(mode, team_data_mode, team_name){
     if(team_data_mode==2){ # la liga single team attack
       laliga_attack_long %>% filter(Squad =='average'| Squad== team_name) %>% ggplot()+
         ggtitle(paste(team_name,"'s ","defense data"))+
-        theme(plot.title = element_text(size = 15, face = "bold"),
-              axis.title = element_text(size = 15, face = "bold"))+
+        theme(plot.title = element_text(size = 12, face = "bold"),
+              axis.title = element_text(size = 12, face = "bold"))+
         geom_col(aes(x=type,y=value,fill=Squad), position = position_dodge())+
         facet_wrap(~type, ncol = 2, scales = 'free')
     }else{ # la liga all team attack
       laliga_all_attack %>% filter(Squad!='average') %>% ggplot(aes(x=goal,y=ex.goal))+
         ggtitle("Laliga teams' attack data")+
-        theme(plot.title = element_text(size = 15, face = "bold"),
-              axis.title = element_text(size = 15, face = "bold"))+
+        theme(plot.title = element_text(size = 12, face = "bold"),
+              axis.title = element_text(size = 12, face = "bold"))+
         geom_label_repel(aes(label=Squad))+geom_abline(slope=1,col='blue')+
         geom_point()+xlab("Goals scored(/90min)")+ylab("Expected goals(/90min)")
     }
@@ -720,16 +723,16 @@ team_plotter_attack <- function(mode, team_data_mode, team_name){
     if(team_data_mode==2){ # serie A single team attack
       serieA_attack_long %>% filter(Squad =='average'| Squad== team_name) %>% ggplot()+
         ggtitle(paste(team_name,"'s ","attack data"))+
-        theme(plot.title = element_text(size = 15, face = "bold"),
-              axis.title = element_text(size = 15, face = "bold"))+
+        theme(plot.title = element_text(size = 12, face = "bold"),
+              axis.title = element_text(size = 12, face = "bold"))+
         geom_col(aes(x=type,y=value,fill=Squad), position = position_dodge())+
         xlab("Type of data")+ylab("Value")+
         facet_wrap(~type, ncol = 2, scales = 'free')
     }else{ # serie A all team attack
       serieA_all_attack %>% filter(Squad!='average') %>% ggplot(aes(x=shoots.90min,y=goal))+
         ggtitle("Serie A teams' attacking data")+
-        theme(plot.title = element_text(size = 15, face = "bold"),
-              axis.title = element_text(size = 15, face = "bold"))+
+        theme(plot.title = element_text(size = 12, face = "bold"),
+              axis.title = element_text(size = 12, face = "bold"))+
         geom_label_repel(aes(label=Squad))+
         geom_hline(yintercept = 52.6,col = "blue") + geom_vline(xintercept = 13, col = "blue") +
         geom_point()+xlab("Shoot attempts(/90min)")+ylab("Team total goal")
@@ -745,8 +748,8 @@ team_plotter_pass <- function(mode, team_data_mode, team_name){
         ggtitle(paste(team_name,"'s ","pass data"))+geom_point()+
         xlab("Pass completion rate(%)")+ylab("progressive distance moved by the ball(m)")+
         geom_hline(yintercept = 96080,col = "blue") + geom_vline(xintercept = 77.8, col = "blue") +
-        theme(plot.title = element_text(size = 15, face = "bold"),
-              axis.title = element_text(size = 15, face = "bold"))+
+        theme(plot.title = element_text(size = 12, face = "bold"),
+              axis.title = element_text(size = 12, face = "bold"))+
         geom_label_repel(data=laliga_all_pass %>% filter(Squad==team_name),
                          aes(label=Squad))+
         geom_point(data=laliga_all_pass %>% filter(Squad==team_name),
@@ -754,8 +757,8 @@ team_plotter_pass <- function(mode, team_data_mode, team_name){
     }else{ # la liga all team pass
       laliga_all_pass %>% filter(Squad!='average') %>% ggplot(aes(x=pass.completion,y=prog.dist))+
         ggtitle("Laliga teams' passing data")+
-        theme(plot.title = element_text(size = 15, face = "bold"),
-              axis.title = element_text(size = 15, face = "bold"))+
+        theme(plot.title = element_text(size = 12, face = "bold"),
+              axis.title = element_text(size = 12, face = "bold"))+
         geom_label_repel(aes(label=Squad))+
         geom_hline(yintercept = 96080,col = "blue") + geom_vline(xintercept = 77.8, col = "blue") +
         geom_point()+xlab("Passing completion rate(%)")+ylab("progressive distance moved by the ball(m)")
@@ -765,8 +768,8 @@ team_plotter_pass <- function(mode, team_data_mode, team_name){
     if(team_data_mode==2){ # serie A single team pass
       serieA_pass_long %>% filter(Squad =='average'| Squad== team_name) %>% ggplot()+
         ggtitle(paste(team_name,"'s ","passing data"))+
-        theme(plot.title = element_text(size = 15, face = "bold"),
-              axis.title = element_text(size = 15, face = "bold"))+
+        theme(plot.title = element_text(size = 12, face = "bold"),
+              axis.title = element_text(size = 12, face = "bold"))+
         geom_col(aes(x=type,y=value,fill=Squad), position = position_dodge())+
         xlab("Type of data")+ylab("Value")+
         facet_wrap(~type, ncol = 2, scales = 'free')
@@ -775,8 +778,8 @@ team_plotter_pass <- function(mode, team_data_mode, team_name){
         ggtitle(paste(team_name,"'s ","pass data"))+geom_point()+
         xlab("Total pass attempted")+ylab("Total key pass")+
         geom_hline(yintercept = 360,col = "blue") + geom_vline(xintercept = 18363, col = "blue") +
-        theme(plot.title = element_text(size = 15, face = "bold"),
-              axis.title = element_text(size = 15, face = "bold"))+
+        theme(plot.title = element_text(size = 12, face = "bold"),
+              axis.title = element_text(size = 12, face = "bold"))+
         geom_label_repel(aes(label=Squad))
     }
   }
@@ -790,8 +793,8 @@ team_plotter_possess <- function(mode, team_data_mode, team_name){
         ggtitle(paste(team_name,"'s ","possess data"))+geom_point()+
         xlab("Possession rate(%)")+ylab("progressive distance moved by the ball(m)")+
         geom_hline(yintercept = 96080,col = "blue") + geom_vline(xintercept = 50, col = "blue") +
-        theme(plot.title = element_text(size = 15, face = "bold"),
-              axis.title = element_text(size = 15, face = "bold"))+
+        theme(plot.title = element_text(size = 12, face = "bold"),
+              axis.title = element_text(size = 12, face = "bold"))+
         geom_label_repel(data=laliga_all_possess %>% filter(Squad==team_name),
                    aes(label=Squad))+
         geom_point(data=laliga_all_possess %>% filter(Squad==team_name),
@@ -799,8 +802,8 @@ team_plotter_possess <- function(mode, team_data_mode, team_name){
     }else{ # la liga all team possess
       laliga_all_possess %>% filter(Squad!='average') %>% ggplot(aes(x=reorder(Squad,poss),y=poss))+
         ggtitle("Laliga teams' possess data")+
-        theme(plot.title = element_text(size = 15, face = "bold"),
-              axis.title = element_text(size = 15, face = "bold"))+
+        theme(plot.title = element_text(size = 12, face = "bold"),
+              axis.title = element_text(size = 12, face = "bold"))+
         geom_point()+geom_hline(yintercept = 50,col='blue')+
         xlab("Squad(ranked by possession rate)")+ylab("average possession percentage(%)")+
         geom_label_repel(aes(label=ifelse(poss>60|poss<41, paste(Squad), "")))
@@ -811,8 +814,8 @@ team_plotter_possess <- function(mode, team_data_mode, team_name){
         ggtitle(paste(team_name,"'s ","possess data"))+geom_point()+
         xlab("Squad(ranked by possession rate)")+ylab("average possession percentage(%)")+
         geom_hline(yintercept = 50,col = "blue") +
-        theme(plot.title = element_text(size = 15, face = "bold"),
-              axis.title = element_text(size = 15, face = "bold"))+
+        theme(plot.title = element_text(size = 12, face = "bold"),
+              axis.title = element_text(size = 12, face = "bold"))+
         geom_label_repel(data=serieA_all_possess %>% filter(Squad==team_name),
                          aes(label=Squad))+
         geom_point(data=serieA_all_possess %>% filter(Squad==team_name),
@@ -820,8 +823,8 @@ team_plotter_possess <- function(mode, team_data_mode, team_name){
     }else{ # serie A all team possess
       serieA_all_possess %>% filter(Squad!='average') %>% ggplot(aes(x=reorder(Squad,Possession),y=Possession))+
         ggtitle("Serie A teams' possess data")+
-        theme(plot.title = element_text(size = 15, face = "bold"),
-              axis.title = element_text(size = 15, face = "bold"))+
+        theme(plot.title = element_text(size = 12, face = "bold"),
+              axis.title = element_text(size = 12, face = "bold"))+
         geom_point()+geom_hline(yintercept = 50,col='blue')+
         xlab("Squad(ranked by possession rate)")+ylab("average possession percentage(%)")+
         geom_label_repel(aes(label=ifelse(Possession>57|Possession<42, paste(Squad), "")))
@@ -835,15 +838,15 @@ team_plotter_defense <- function(mode, team_data_mode, team_name){
     if(team_data_mode==2){ # la liga single team defense
       laliga_defense_long %>% filter(Squad =='average'| Squad== team_name) %>% ggplot()+
         ggtitle(paste(team_name,"'s ","defense data"))+
-        theme(plot.title = element_text(size = 15, face = "bold"),
-              axis.title = element_text(size = 15, face = "bold"))+
+        theme(plot.title = element_text(size = 12, face = "bold"),
+              axis.title = element_text(size = 12, face = "bold"))+
         geom_col(aes(x=type,y=value,fill=Squad), position = position_dodge())+
         xlab("Type of data")+ylab("Value")+
         facet_wrap(~type, ncol = 2, scales = 'free')
     }else{ # la liga all team defense
       laliga_all_defense %>% filter(Squad!='average') %>% ggplot(aes(x=scored,y=ex.scored))+ggtitle('Teams expect goal against vs goal conceded')+
-        theme(plot.title = element_text(size = 15, face = "bold"),
-              axis.title = element_text(size = 15, face = "bold"))+
+        theme(plot.title = element_text(size = 12, face = "bold"),
+              axis.title = element_text(size = 12, face = "bold"))+
         geom_label_repel(aes(label=Squad))+geom_abline(slope=1,col='blue')+
         geom_point()+xlab("Goals conceded(/90min)")+ylab("Expected goals against(/90min)")
     }
@@ -851,15 +854,15 @@ team_plotter_defense <- function(mode, team_data_mode, team_name){
     if(team_data_mode==2){ # serie A single team defense
       serieA_defense_long %>% filter(Squad =='average'| Squad== team_name) %>% ggplot()+
         ggtitle(paste(team_name,"'s ","defense data"))+
-        theme(plot.title = element_text(size = 15, face = "bold"),
-              axis.title = element_text(size = 15, face = "bold"))+
+        theme(plot.title = element_text(size = 12, face = "bold"),
+              axis.title = element_text(size = 12, face = "bold"))+
         geom_col(aes(x=type,y=value,fill=Squad), position = position_dodge())+
         xlab("Type of data")+ylab("Value")+
         facet_wrap(~type, ncol = 2, scales = 'free')
     }else{ # serie A all team defense
       serieA_all_defense %>% filter(Squad!='average') %>% ggplot(aes(x=tackle,y=tackle.win))+ggtitle('Teams defense tackle behaviour')+
-        theme(plot.title = element_text(size = 15, face = "bold"),
-              axis.title = element_text(size = 15, face = "bold"))+
+        theme(plot.title = element_text(size = 12, face = "bold"),
+              axis.title = element_text(size = 12, face = "bold"))+
         geom_label_repel(aes(label=Squad))+
         geom_hline(yintercept = 391,col = "blue") + geom_vline(xintercept = 637, col = "blue") +
         geom_point()+xlab("Total tackle attempts")+ylab("Total tackle win time")
@@ -873,42 +876,42 @@ team_ability_judge <- function(mode,team_name){
     res <- list()
     if(cmp[1,'Tackle won']>40){
       res$defence <- 1
-    }else if(cmp[1,'Tackle won']<-40){
+    }else if(cmp[1,'Tackle won']<(-40)){
       res$defence <- 3
     }else{
       res$defence <- 2
     }
     if(cmp[1,'Goals']>13){
       res$score <- 1
-    }else if(cmp[1,'Goals']<-10){
+    }else if(cmp[1,'Goals']<(-10)){
       res$score <- 3
     }else{
       res$score <- 2
     }
     if(cmp[1,'Passing rate']>2){
       res$passing <- 1
-    }else if(cmp[1,'Passing rate']<-3){
+    }else if(cmp[1,'Passing rate']<(-3)){
       res$passing <- 3
     }else{
       res$passing <- 2
     }
     if(cmp[1,'Key pass']>70){
       res$attack <- 1
-    }else if(cmp[1,'Key pass']<-60){
+    }else if(cmp[1,'Key pass']<(-60)){
       res$attack <- 3
     }else{
       res$attack <- 2
     }
     if(cmp[1,'Possesion']>4){
       res$possess <- 1
-    }else if(cmp[1,'Possesion']<-5){
+    }else if(cmp[1,'Possesion']<(-5)){
       res$possess <- 3
     }else{
       res$possess <- 2
     }
     if(cmp[1,'Saved expected goals']>2){
       res$goalkeeper <- 1
-    }else if(cmp[1,'Saved expected goals']<-6){
+    }else if(cmp[1,'Saved expected goals']<(-6)){
       res$goalkeeper <- 3
     }else{
       res$goalkeeper <- 2
@@ -919,42 +922,42 @@ team_ability_judge <- function(mode,team_name){
     res <- list()
     if(cmp[1,'Goal conceded']>8){
       res$defence <- 1
-    }else if(cmp[1,'Goal conceded']<-12){
+    }else if(cmp[1,'Goal conceded']<(-12)){
       res$defence <- 3
     }else{
       res$defence <- 2
     }
     if(cmp[1,'Goal scored']>15){
       res$score <- 1
-    }else if(cmp[1,'Goal scored']<-7){
+    }else if(cmp[1,'Goal scored']<(-7)){
       res$score <- 3
     }else{
       res$score <- 2
     }
     if(cmp[1,'pass rate']>3){
       res$passing <- 1
-    }else if(cmp[1,'pass rate']<-3){
+    }else if(cmp[1,'pass rate']<(-3)){
       res$passing <- 3
     }else{
       res$passing <- 2
     }
     if(cmp[1,'expeced assists 90min']>0.25){
       res$attack <- 1
-    }else if(cmp[1,'expeced assists 90min']<-0.12){
+    }else if(cmp[1,'expeced assists 90min']<(-0.12)){
       res$attack <- 3
     }else{
       res$attack <- 2
     }
     if(cmp[1,'possession rate']>6){
       res$possess <- 1
-    }else if(cmp[1,'possession rate']<-4.5){
+    }else if(cmp[1,'possession rate']<(-4.5)){
       res$possess <- 3
     }else{
       res$possess <- 2
     }
     if(cmp[1,'save rate']>3){
       res$goalkeeper <- 1
-    }else if(cmp[1,'save rate']<-4){
+    }else if(cmp[1,'save rate']<(-4)){
       res$goalkeeper <- 3
     }else{
       res$goalkeeper <- 2
@@ -983,12 +986,77 @@ team_plotter_summary <- function(mode,team_name){
 }
 
 ## Team potential signing
-team_plotter_signing <- function(mode,team_name){
-  if (as.numeric(mode)==6){ #serie A
-    
-  }else if (as.numeric(mode)==7){ #la liga
-    
-  }
+team_plotter_signing1 <- function(mode,team_name){
+  res <- team_ability_judge(mode,team_name)
+  players <- score_recommend[[round((res$attack+res$score)/2)]]
+  data <- (ucl_forward_final %>% filter(player_name %in% players))[c('player_name','club','goals','total_attempts','distance_covered','pass_accuracy','match_played')]
+  data[,c(3,4,5,6,7)] <- as.numeric(unlist(data[,c(3,4,5,6,7)]))
+  label <- apply( data[,c('player_name','club')], 1, paste, collapse="-")
+  data['goals'] <- data['goals']/data['match_played']
+  data['total_attempts'] <- data['total_attempts']/data['match_played']
+  data['distance_covered'] <- data['distance_covered']/data['match_played']
+  data_long <- data%>% pivot_longer(goals:pass_accuracy,names_to = 'type',values_to = 'value')
+  data_long %>% ggplot()+
+    ggtitle(paste('Based on',score_summary[res$score],attack_summary[res$attack]))+
+    theme(plot.title = element_text(size = 12, face = "bold"),
+          axis.title = element_text(size = 12, face = "bold"))+
+    geom_col(aes(x=type,y=value,fill=player_name), position = position_dodge())+
+    facet_wrap(~type, ncol = 2, scales = 'free')+
+    scale_fill_discrete(labels=label)
+}
+
+team_plotter_signing2 <- function(mode,team_name){
+  res <- team_ability_judge(mode,team_name)
+  players <- midfielder_recommend[[round((res$passing+res$possess)/2)]]
+  data <- (ucl_midfielder_final %>% filter(player_name %in% players))[c('player_name','club','balls_recoverd','distance_covered','pass_attempted','pass_accuracy','match_played.y')]
+  data[,c(3,4,5,6,7)] <- as.numeric(unlist(data[,c(3,4,5,6,7)]))
+  label <- apply( data[,c('player_name','club')], 1, paste, collapse="-")
+  data['balls_recoverd'] <- data['balls_recoverd']/data['match_played.y']
+  data['distance_covered'] <- data['distance_covered']/data['match_played.y']
+  data['pass_attempted'] <- data['pass_attempted']/data['match_played.y']
+  data_long <- data%>% pivot_longer(balls_recoverd:pass_accuracy,names_to = 'type',values_to = 'value')
+  data_long %>% ggplot()+
+    ggtitle(paste('Based on',passing_summary[res$passing],possess_summary[res$possess]))+
+    theme(plot.title = element_text(size = 12, face = "bold"),
+          axis.title = element_text(size = 12, face = "bold"))+
+    geom_col(aes(x=type,y=value,fill=player_name), position = position_dodge())+
+    facet_wrap(~type, ncol = 2, scales = 'free')+
+    scale_fill_discrete(labels=label)
+}
+
+team_plotter_signing3 <- function(mode,team_name){
+  res <- team_ability_judge(mode,team_name)
+  players <- defence_recommand[[res$defence]]
+  data <- (ucl_defender_final %>% filter(player_name %in% players))[c('player_name','club','balls_recoverd','tackles','clearance_attempted','pass_accuracy','match_played.y')]
+  data[,c(3,4,5,6,7)] <- as.numeric(unlist(data[,c(3,4,5,6,7)]))
+  label <- apply( data[,c('player_name','club')], 1, paste, collapse="-")
+  data['balls_recoverd'] <- data['balls_recoverd']/data['match_played.y']
+  data['tackles'] <- data['tackles']/data['match_played.y']
+  data['clearance_attempted'] <- data['clearance_attempted']/data['match_played.y']
+  data_long <- data %>% pivot_longer(balls_recoverd:pass_accuracy,names_to = 'type',values_to = 'value')
+  data_long %>% ggplot()+
+    ggtitle(paste('Based on',defence_summary[res$defence]))+
+    theme(plot.title = element_text(size = 12, face = "bold"),
+          axis.title = element_text(size = 12, face = "bold"))+
+    geom_col(aes(x=type,y=value,fill=player_name), position = position_dodge())+
+    facet_wrap(~type, ncol = 2, scales = 'free')+
+    scale_fill_discrete(labels=label)
+}
+
+team_plotter_signing4 <- function(mode,team_name){
+  res <- team_ability_judge(mode,team_name)
+  players <- goalkeeper_recommand[[res$goalkeeper]]
+  data <- (ucl_goalkeeping_final %>% filter(player_name %in% players))[c('player_name','club','mean_save','mean_conceded','pass_accuracy')]
+  data[,c(3,4,5)] <- as.numeric(unlist(data[,c(3,4,5)]))
+  label <- apply( data[,c('player_name','club')], 1, paste, collapse="-")
+  data_long <- data %>% pivot_longer(mean_save:pass_accuracy,names_to = 'type',values_to = 'value')
+  data_long %>% ggplot()+
+    ggtitle(paste('Based on',goalkeeper_summary[res$goalkeeper]))+
+    theme(plot.title = element_text(size = 12, face = "bold"),
+          axis.title = element_text(size = 12, face = "bold"))+
+    geom_col(aes(x=type,y=value,fill=player_name), position = position_dodge())+
+    facet_wrap(~type, ncol = 2, scales = 'free')+
+    scale_fill_discrete(labels=label)
 }
 
 s_team_input <- function(num){

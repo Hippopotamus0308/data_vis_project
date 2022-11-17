@@ -10,7 +10,8 @@
 library(shiny)
 library(shinyWidgets)
 library(shinycssloaders)
-
+library(networkD3)
+library(plotly)
 options(spinner.color="#0275D8", spinner.color.background="#ffffff", spinner.size=2)
 
 # Define UI for application that draws a histogram
@@ -42,6 +43,9 @@ shinyUI(fluidPage(
           #uiOutput("main_searcher"),
           ## modified plot's sequence
           column(12,withSpinner(plotOutput("plotter_radar"),type = 2)),
+          # simpleNetworkOutput(
+          #   "network", width = "100%", height = "700px"
+          # ),
           column(12,
                  column(6,align='center',withSpinner(plotOutput("plotter_main_res"),type=2)),
                  column(6,withSpinner(plotOutput("plotter_addition"),type=2))),
