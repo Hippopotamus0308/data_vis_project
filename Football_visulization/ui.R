@@ -10,7 +10,6 @@
 library(shiny)
 library(shinyWidgets)
 library(shinycssloaders)
-library(networkD3)
 library(plotly)
 options(spinner.color="#0275D8", spinner.color.background="#ffffff", spinner.size=2)
 

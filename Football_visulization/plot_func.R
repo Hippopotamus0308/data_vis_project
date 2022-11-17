@@ -4,8 +4,6 @@ library(fmsb)
 library(ggrepel)
 library(shinycssloaders)
 library(tidyverse)
-library(networkD3)
-library(visNetwork)
 
 # radar chart for a certain player / average data
 player_plotter_radar <- function(type, player_name){
