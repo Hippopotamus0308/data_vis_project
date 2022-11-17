@@ -8,7 +8,7 @@ All code and data can be found on https://github.com/Hippopotamus0308/data_vis_p
 
 ##### 2) Summary of major files and folders
 
-This repo/ZIP files contains the README.md(this file) for instruction, project proposal, final report, and the folder **Football_visulization**(which contains the code).
+This repo/ZIP files contains the README.md(this file) for instruction, project proposal, final report, and the folder **Football_visulization**(which contains the code) and folder **Screenshot** which contains some of the screenshots of shiny app.
 
 In Football_visulization folder, server.R and ui.R are the main files for shiny app. data.R is used for prepossess data, and plot_func.R stored plot function used in shiny app.
 
