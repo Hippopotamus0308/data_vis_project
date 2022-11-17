@@ -16,6 +16,12 @@ Apart from above four R files, the **data** folder stores data used in this proj
 
 ##### 3) Instruction to run it
 
+You can download all files by
+
+```
+git clone https://github.com/Hippopotamus0308/data_vis_project.git
+```
+
 These packages should be installed before running:
 
 - shiny
